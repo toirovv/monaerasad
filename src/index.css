@@ -1,0 +1,459 @@
+/* index.css */
+@import "tailwindcss";
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  position: relative;
+  background-color: #050709;
+  color: #ffffff;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  letter-spacing: -0.01em;
+}
+
+/* Yuqorida doim ko'rinadigan yorug' teal chiziq — endi ustidan yugurib
+   o'tadigan shimmer bilan, "sahifa yoqilgan va faol ishlayapti" hissi kuchaydi */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 40;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(18, 198, 168, 0.9) 45%,
+    rgba(180, 255, 240, 0.95) 50%,
+    rgba(18, 198, 168, 0.9) 55%,
+    transparent
+  );
+  background-size: 250% 100%;
+  box-shadow: 0 0 20px 2px rgba(18, 198, 168, 0.6);
+  pointer-events: none;
+  animation:
+    topGlowPulse 4s ease-in-out infinite,
+    topGlowSweep 7s linear infinite;
+}
+
+/* Asosiy fon qatlami — kuchli teal spotlight + quyuq baza + endi bosh va
+   oyoq tomonda yumshoq vinyetka (chekkalar biroz qorayadi), bu markazdagi
+   kontentga tabiiy "chuqurlik" va fokus beradi, tekis fon o'rniga. */
+.bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse 130% 100% at 50% 45%,
+      transparent 52%,
+      rgba(3, 4, 5, 0.6) 100%
+    ),
+    radial-gradient(
+      ellipse 70% 55% at 20% 0%,
+      rgba(18, 198, 168, 0.38),
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 60% 50% at 100% 15%,
+      rgba(18, 198, 168, 0.22),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 80% 60% at 50% 100%,
+      rgba(18, 198, 168, 0.16),
+      transparent 62%
+    ),
+    linear-gradient(180deg, #050709 0%, #0a0f16 35%, #080b10 65%, #030405 100%);
+  background-size:
+    100% 100%,
+    160% 160%,
+    160% 160%,
+    160% 160%,
+    100% 100%;
+  animation: meshDrift 18s ease-in-out infinite;
+}
+
+/* Suzuvchi "aurora" bloblar — yumshoq blur qilingan doiralar, sekin
+   suzib yuradi. Bu ish avvaldan mavjud bo'lgan (lekin ishlatilmagan)
+   `float` keyframe'idan foydalanadi — endi fonga chuqurlik va tirik
+   harakat qo'shadi, lekin juda xira (blur+past opacity) bo'lgani uchun
+   kontentga xalaqit bermaydi. */
+.bg-layer::before,
+.bg-layer::after {
+  content: "";
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.55;
+  will-change: transform;
+}
+.bg-layer::before {
+  width: 480px;
+  height: 480px;
+  top: -140px;
+  left: -120px;
+  background: radial-gradient(circle, rgba(18, 198, 168, 0.4), transparent 70%);
+  animation: float 15s ease-in-out infinite;
+}
+.bg-layer::after {
+  width: 420px;
+  height: 420px;
+  bottom: -160px;
+  right: -100px;
+  background: radial-gradient(
+    circle,
+    rgba(18, 198, 168, 0.24),
+    transparent 70%
+  );
+  animation: float 19s ease-in-out infinite reverse;
+}
+
+/* Blueprint panjara — ochiq va sezilarli */
+.bg-grid {
+  position: fixed;
+  inset: -56px 0 0 0;
+  z-index: -2;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(18, 198, 168, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(18, 198, 168, 0.16) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(
+    ellipse 90% 70% at 50% 5%,
+    black 0%,
+    transparent 75%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 90% 70% at 50% 5%,
+    black 0%,
+    transparent 75%
+  );
+  animation: gridDrift 20s linear infinite;
+}
+
+/* Film grain */
+.bg-grain {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.06;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+
+/* App birinchi ochilganda yumshoq fade-in — "yalt etib" chiqib qolmasin */
+#root {
+  animation: appFadeIn 0.5s ease both;
+}
+
+@keyframes appFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes topGlowPulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes topGlowSweep {
+  0% {
+    background-position: -150% 0;
+  }
+  100% {
+    background-position: 150% 0;
+  }
+}
+
+@keyframes meshDrift {
+  0%,
+  100% {
+    background-position:
+      0 0,
+      20% 0%,
+      100% 15%,
+      50% 100%,
+      0 0;
+  }
+  50% {
+    background-position:
+      0 0,
+      28% 8%,
+      92% 24%,
+      44% 90%,
+      0 0;
+  }
+}
+
+@keyframes gridDrift {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(48px);
+  }
+}
+
+/* Matn belgilash rangi */
+::selection {
+  background: rgba(18, 198, 168, 0.32);
+  color: #ffffff;
+}
+
+/* Klaviatura fokus halqasi */
+:focus-visible {
+  outline: 2px solid rgba(18, 198, 168, 0.7);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Scrollbar — Chrome/Safari/Edge (WebKit) */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(18, 198, 168, 0.18);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(18, 198, 168, 0.35);
+}
+
+/* Scrollbar — Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(18, 198, 168, 0.18) transparent;
+}
+
+/* Harakatga sezgir foydalanuvchilar (tizim sozlamasida "reduce motion"
+   yoqilgan) uchun — barcha dekorativ animatsiyalar deyarli o'chadi.
+   Bu qulaylik va accessibility uchun muhim, funksionallikka ta'sir qilmaydi. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.333%);
+  }
+}
+
+@keyframes scroll-ltr {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.333%);
+  }
+}
+
+@keyframes scroll-rtl {
+  0% {
+    transform: translateX(-33.333%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(2deg);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.65;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes ringPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(18, 198, 168, 0.35);
+  }
+  70% {
+    box-shadow: 0 0 0 14px rgba(18, 198, 168, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(18, 198, 168, 0);
+  }
+}
+
+:root {
+  --color-bg: #0a0e14;
+  --color-bg-secondary: #111827;
+  --color-bg-sidebar: #0d1117;
+
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #9ca3af;
+  --color-text-muted: #6b7280;
+
+  --color-accent: #12c6a8;
+  --color-accent-hover: #0fbfa3;
+  --color-accent-gradient: linear-gradient(90deg, #0ea5a0 0%, #14d9b4 100%);
+
+  --color-border: #1f2937;
+
+  --color-btn-primary-bg: #12c6a8;
+  --color-btn-primary-text: #0a0e14;
+  --color-btn-secondary-border: #374151;
+  --color-btn-secondary-text: #ffffff;
+}
+
+/* Card hover — CSS bilan, state render talab qilmaydi */
+.card-shell {
+  background: rgba(17, 24, 39, 0.4);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid #1f2937;
+  box-shadow:
+    0 4px 16px -4px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition:
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.4s ease,
+    border-color 0.4s ease;
+  will-change: transform;
+}
+.card-shell:hover {
+  transform: translateY(-4px) scale(1.008);
+  border-color: rgba(18, 198, 168, 0.27);
+  box-shadow:
+    0 20px 45px -14px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(18, 198, 168, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.card-shell::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(18, 198, 168, 0.4),
+    transparent
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+.card-shell:hover::before {
+  opacity: 1;
+}
+.card-shell::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(18, 198, 168, 0.2),
+    transparent
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.card-shell:hover::after {
+  opacity: 0.5;
+}
+
+/* Card icon buttons — hover da katta va opacity o'zgaradi */
+.card-icon-btn {
+  transition:
+    transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.2s ease;
+}
+.card-icon-btn:hover {
+  transform: scale(1.12);
+  background: rgba(10, 14, 20, 0.55);
+}
+.card-icon-btn:active {
+  transform: scale(0.85);
+}
+
+/* Card stepper buttons — hover da yorqinroq */
+.card-stepper-btn {
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+.card-stepper-btn:hover {
+  background: rgba(18, 198, 168, 0.2);
+}
+.card-stepper-btn:active {
+  transform: scale(0.8);
+}
+
+/* Card add button — hover da katta va porloq */
+.card-add-btn {
+  transition:
+    transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.3s ease;
+}
+.card-add-btn:hover {
+  transform: scale(1.08);
+  box-shadow:
+    0 8px 22px -5px rgba(18, 198, 168, 0.74),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+.card-add-btn:active {
+  transform: scale(0.85);
+}
