@@ -33,13 +33,6 @@ const SHADOW_CARD =
 const SHADOW_ICON_BOX = "0 2px 8px -2px rgba(18,198,168,0.18)";
 const SHADOW_CTA = "0 8px 22px -6px rgba(18,198,168,0.45)";
 
-const NAV_LINKS = [
-  { label: "Bosh sahifa", href: "/" },
-  { label: "Biz haqimizda", href: "/about" },
-  { label: "Katalog", href: "/catalog" },
-  { label: "Aloqa", href: "/contact" },
-];
-
 const CONTACTS = [
   {
     icon: Phone,
@@ -197,52 +190,6 @@ const Footer = () => {
                   className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
                 />
               </Link>
-            </motion.div>
-
-            {/* Ustun 2 — Navigatsiya */}
-            <motion.div
-              variants={col}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              custom={1}
-            >
-              <h3 className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-white/25 mb-4 sm:mb-5">
-                navigatsiya
-              </h3>
-              <ul className="space-y-2.5">
-                {NAV_LINKS.map((link) => {
-                  const active = isActive(link.href);
-                  return (
-                    <li key={link.href}>
-                      <Link
-                        to={link.href}
-                        className="group relative inline-flex items-center gap-2 text-sm transition-all duration-300"
-                        style={{
-                          color: active ? ACCENT : "rgba(255,255,255,0.5)",
-                        }}
-                      >
-                        <span
-                          className="absolute -left-3 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300"
-                          style={{
-                            background: ACCENT,
-                            boxShadow: "0 0 8px rgba(18,198,168,0.5)",
-                          }}
-                        />
-                        <span className="group-hover:translate-x-1 transition-transform duration-300">
-                          {link.label}
-                        </span>
-                        {active && (
-                          <span
-                            className="w-1 h-1 rounded-full"
-                            style={{ background: ACCENT }}
-                          />
-                        )}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
             </motion.div>
 
             {/* Ustun 3 — Aloqa */}

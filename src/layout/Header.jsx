@@ -13,7 +13,6 @@ import {
 import { useAuth } from "../context/useAuth";
 import { useCartTotals } from "../context/CartContext";
 import { useFavoritesCount } from "../context/FavoritesContext";
-import moLogo from "../assets/mo.png";
 
 const ACCENT = "#12C6A8";
 const FONT_BRAND = "'Orbitron', sans-serif";
@@ -92,7 +91,7 @@ const Header = () => {
           paddingBottom: scrolled ? 10 : 14,
         }}
         transition={springSoft}
-        className="md:hidden fixed top-0 inset-x-0 z-50 flex items-center justify-between px-4 border-b"
+        className="md:hidden fixed top-2 left-3 right-3 z-50 flex items-center justify-between px-4 rounded-2xl border"
         style={{
           fontFamily: FONT_UI,
           background: "rgba(9,11,17,0.85)",
@@ -102,18 +101,13 @@ const Header = () => {
             ? "rgba(18,198,168,0.14)"
             : "rgba(255,255,255,0.06)",
           boxShadow: scrolled
-            ? "0 8px 30px -8px rgba(0,0,0,0.6)"
-            : "0 4px 20px -4px rgba(0,0,0,0.4)",
+            ? "0 12px 40px -8px rgba(0,0,0,0.7), 0 0 0 1px rgba(18,198,168,0.1)"
+            : "0 8px 30px -6px rgba(0,0,0,0.5)",
         }}
       >
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
           <div className="relative">
-            <img
-              src={moLogo}
-              alt="MONAER"
-              className="w-8 h-8 rounded-lg object-contain relative z-10"
-            />
             <div
               className="absolute inset-0 rounded-lg opacity-0 group-active:opacity-60 transition-opacity duration-300"
               style={{ background: ACCENT, filter: "blur(10px)" }}
@@ -204,11 +198,6 @@ const Header = () => {
       >
         <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
           <div className="relative">
-            <img
-              src={moLogo}
-              alt="MONAER"
-              className="w-8 h-8 rounded-lg object-contain relative z-10"
-            />
             <div
               className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-70 transition-opacity duration-300"
               style={{ background: ACCENT, filter: "blur(12px)" }}
