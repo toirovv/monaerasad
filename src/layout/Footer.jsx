@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Send,
   Phone,
@@ -14,20 +14,12 @@ import {
 
 const ACCENT = "#12C6A8";
 
-/* Header'da ishlatilgan bilan bir xil ikkita font oilasi — brend uchun
-   Orbitron, qolgan hamma matn uchun Inter. Butun sayt bo'ylab bitta
-   vizual "til" saqlanishi uchun shu qiymatlar Header.jsx bilan mos. */
 const FONT_BRAND = "'Orbitron', sans-serif";
 const FONT_UI = "'Inter', sans-serif";
 
-/* Header'dagi kabi — bitta joydan boshqariladigan icon o'lchami, shu
-   tufayli Aloqa va Ishonch ustunlaridagi barcha icon'lar bir xil chiqadi */
 const FOOTER_ICON_SIZE = 13;
 const FOOTER_ICON_STROKE = 2;
 
-/* Soyalar — Header.jsx bilan bir xil uslub: uzoq ambient + yaqin kontakt
-   soyasi + ichki highlight. Shu bilan Footer ham Header bilan bir xil
-   "chuqurlikda suzayotgan shisha" hissi beradi. */
 const SHADOW_CARD =
   "0 20px 50px -18px rgba(0,0,0,0.6), 0 6px 18px -8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06)";
 const SHADOW_ICON_BOX = "0 2px 8px -2px rgba(18,198,168,0.18)";
@@ -80,8 +72,6 @@ const col = {
   }),
 };
 
-/* Aloqa/Ishonch ustunlaridagi icon-katakcha — ikkala ustunda ham bir xil
-   o'lcham va uslubda chiqishi uchun bitta joyga chiqarildi */
 const IconBox = ({ icon: Icon }) => (
   <div
     className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-110"
@@ -101,17 +91,7 @@ const IconBox = ({ icon: Icon }) => (
 );
 
 const Footer = () => {
-  const location = useLocation();
-  const isActive = (href) =>
-    href === "/"
-      ? location.pathname === "/"
-      : location.pathname.startsWith(href);
-
   return (
-    /* Full-width EMAS: Header'dagi kabi yon tomonlarda bo'shliq qoldirildi
-       (px-3 sm:px-6 md:px-8 lg:px-14), karta esa max-w-6xl bilan cheklangan
-       va markazga tekislangan — ya'ni suzayotgan, "qamrab olingan" karta,
-       ekran chetidan-chetigacha yopishib ketmaydi. */
     <footer className="relative z-10 mt-16 sm:mt-24 px-3 sm:px-6 md:px-8 lg:px-14 pb-4 sm:pb-6">
       <motion.div
         initial={{ opacity: 0, y: 24 }}
@@ -129,7 +109,7 @@ const Footer = () => {
           boxShadow: SHADOW_CARD,
         }}
       >
-        {/* Yuqori shisha qirrasi — Header'dagi bilan bir xil detal */}
+        {/* Yuqori shisha qirrasi */}
         <div
           className="pointer-events-none absolute top-0 left-8 right-8 h-px"
           style={{
@@ -138,7 +118,7 @@ const Footer = () => {
           }}
         />
 
-        {/* Ambient blob — FAQAT teal, boshqa rang yo'q (sayt bo'ylab bitta rang qoidasi) */}
+        {/* Ambient blob */}
         <div
           className="pointer-events-none absolute -top-32 left-[12%] w-72 h-72 rounded-full blur-[100px] opacity-[0.05]"
           style={{ background: ACCENT }}
@@ -149,8 +129,8 @@ const Footer = () => {
         />
 
         <div className="relative px-5 sm:px-8 md:px-10 pt-10 sm:pt-14 pb-6 sm:pb-8">
-          {/* Grid: 4 ustun desktop, 2 planshet, 1 mobil */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-6 lg:gap-8 mb-10 sm:mb-12">
+          {/* Grid: 3 ta haqiqiy ustunga moslab to'g'rilandi */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-6 lg:gap-12 mb-10 sm:mb-12">
             {/* Ustun 1 — Brend */}
             <motion.div
               variants={col}
@@ -158,7 +138,6 @@ const Footer = () => {
               whileInView="visible"
               viewport={{ once: true }}
               custom={0}
-              className="sm:col-span-2 lg:col-span-1"
             >
               <Link to="/" className="inline-block mb-4">
                 <span
@@ -192,13 +171,13 @@ const Footer = () => {
               </Link>
             </motion.div>
 
-            {/* Ustun 3 — Aloqa */}
+            {/* Ustun 2 — Aloqa */}
             <motion.div
               variants={col}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
-              custom={2}
+              custom={1}
             >
               <h3 className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-white/25 mb-4 sm:mb-5">
                 aloqa
@@ -229,13 +208,13 @@ const Footer = () => {
               </ul>
             </motion.div>
 
-            {/* Ustun 4 — Ishonch belgilari */}
+            {/* Ustun 3 — Ishonch belgilari */}
             <motion.div
               variants={col}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
-              custom={3}
+              custom={2}
             >
               <h3 className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-white/25 mb-4 sm:mb-5">
                 ishonch

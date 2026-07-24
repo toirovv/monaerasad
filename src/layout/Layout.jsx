@@ -18,7 +18,7 @@ const Layout = () => {
   }, [location.pathname])
 
   return (
-    <div className="pt-[52px] pb-[72px] md:pt-0 md:pb-0">
+    <div className="pt-[64px] pb-[72px] md:pt-0 md:pb-0">
       <Header />
       <AnimatePresence mode="wait">
         <motion.main
