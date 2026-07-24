@@ -4,30 +4,23 @@ import { useCartItems, useCartTotals, useCartActions } from "../context/CartCont
 import CartEmpty from "../components/cart/CartEmpty";
 import CartItem from "../components/cart/CartItem";
 import CartStepProgress from "../components/cart/CartStepProgress";
-import BacketSkeleton from "../components/skeletons/BacketSkeleton";
-import useSimulatedLoading from "../hooks/useSimulatedLoading";
 import { useNavigate } from "react-router-dom";
 
 const ACCENT = "#12C6A8";
 
 const Backet = () => {
-  const loading = useSimulatedLoading(1000);
   const items = useCartItems();
   const { totalItems, totalPrice, totalPriceUZS } = useCartTotals();
   const { updateQty, removeItem, clearCart } = useCartActions();
   const navigate = useNavigate();
-
-  if (loading) return <BacketSkeleton />;
 
   if (items.length === 0) return <CartEmpty />;
 
   return (
     <div className="min-h-screen pt-24 sm:pt-28 pb-36 md:pb-12 px-3 sm:px-4">
       <div className="max-w-4xl mx-auto">
-        {/* Step Progress */}
         <CartStepProgress currentStep={1} />
 
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -66,7 +59,6 @@ const Backet = () => {
         </motion.div>
 
         <div className="grid lg:grid-cols-[1fr_340px] gap-4 sm:gap-6 items-start">
-          {/* Cart Items */}
           <div className="flex flex-col gap-2.5 sm:gap-3">
             <AnimatePresence mode="popLayout">
               {items.map((item, i) => (
@@ -81,7 +73,6 @@ const Backet = () => {
             </AnimatePresence>
           </div>
 
-          {/* Summary Sidebar */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -97,7 +88,6 @@ const Backet = () => {
                 WebkitBackdropFilter: "blur(20px)",
               }}
             >
-              {/* Accent top line */}
               <div
                 className="h-[2px]"
                 style={{ background: `linear-gradient(90deg, transparent, ${ACCENT}66, transparent)` }}
@@ -106,7 +96,6 @@ const Backet = () => {
               <div className="p-4 sm:p-6">
                 <h3 className="text-sm font-bold text-white mb-4">Buyurtma xulosasi</h3>
 
-                {/* Summary rows */}
                 <div className="flex flex-col gap-2.5 mb-5">
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-white/40">Mahsulotlar ({totalItems})</span>
@@ -132,7 +121,6 @@ const Backet = () => {
                   </div>
                 </div>
 
-                {/* Checkout button */}
                 <motion.button
                   whileHover={{ scale: 1.015 }}
                   whileTap={{ scale: 0.97 }}
@@ -151,7 +139,6 @@ const Backet = () => {
                   />
                 </motion.button>
 
-                {/* Trust badges */}
                 <div className="flex items-center justify-center gap-4 sm:gap-5 mt-5 pt-4" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
                   {[
                     { icon: ShieldCheck, label: "Kafolat" },

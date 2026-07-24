@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import {
   Home,
@@ -9,7 +9,6 @@ import {
   ShoppingBag,
   UserRound,
   Heart,
-  Search,
 } from "lucide-react";
 import { useAuth } from "../context/useAuth";
 import { useCartTotals } from "../context/CartContext";
@@ -27,28 +26,44 @@ const NAV_LINKS = [
   { label: "Bog'lanish", href: "/contact", icon: PhoneCall },
 ];
 
+// Savatcha doim o'rtada (3-o'rinda) turishi uchun tartib shunday
 const BOTTOM_NAV = [
   { label: "Sahifa", href: "/", icon: Home },
   { label: "Katalog", href: "/catalog", icon: LayoutGrid },
-  { label: "Savatcha", href: "/backet", icon: ShoppingBag, countKey: "cart" },
+  {
+    label: "Savatcha",
+    href: "/backet",
+    icon: ShoppingBag,
+    countKey: "cart",
+    isCenter: true,
+  },
   { label: "Sevimli", href: "/favorites", icon: Heart, countKey: "favorites" },
   { label: "Aloqa", href: "/contact", icon: PhoneCall },
 ];
 
-const Badge = ({ count }) => {
-  if (count <= 0) return null;
-  return (
-    <span
-      className="absolute -top-1 -right-1.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full text-[10px] font-bold text-white px-1 leading-none"
-      style={{
-        background: "#E11D48",
-        boxShadow: "0 2px 8px rgba(225,29,72,0.5)",
-      }}
-    >
-      {count}
-    </span>
-  );
-};
+const springSoft = { type: "spring", stiffness: 380, damping: 30 };
+const springSnap = { type: "spring", stiffness: 500, damping: 25 };
+
+const Badge = ({ count }) => (
+  <AnimatePresence>
+    {count > 0 && (
+      <motion.span
+        key="badge"
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0, opacity: 0 }}
+        transition={springSnap}
+        className="absolute -top-1.5 -right-2 min-w-[17px] h-[17px] flex items-center justify-center rounded-full text-[10px] font-bold text-white px-1 leading-none"
+        style={{
+          background: "linear-gradient(135deg, #FB4570, #E11D48)",
+          boxShadow: "0 2px 10px rgba(225,29,72,0.55)",
+        }}
+      >
+        {count > 9 ? "9+" : count}
+      </motion.span>
+    )}
+  </AnimatePresence>
+);
 
 const Header = () => {
   const location = useLocation();
@@ -71,24 +86,39 @@ const Header = () => {
   return (
     <>
       {/* ========== MOBILE TOP HEADER ========== */}
-      <header
-        className="md:hidden fixed top-0 inset-x-0 z-50 flex items-center justify-between px-4 py-3.5 border-b"
+      <motion.header
+        animate={{
+          paddingTop: scrolled ? 10 : 14,
+          paddingBottom: scrolled ? 10 : 14,
+        }}
+        transition={springSoft}
+        className="md:hidden fixed top-0 inset-x-0 z-50 flex items-center justify-between px-4 border-b"
         style={{
           fontFamily: FONT_UI,
-          background: "rgba(10,12,18,0.92)",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
-          borderColor: "rgba(255,255,255,0.06)",
-          boxShadow: "0 4px 20px -4px rgba(0,0,0,0.5)",
+          background: "rgba(9,11,17,0.85)",
+          backdropFilter: "blur(22px) saturate(160%)",
+          WebkitBackdropFilter: "blur(22px) saturate(160%)",
+          borderColor: scrolled
+            ? "rgba(18,198,168,0.14)"
+            : "rgba(255,255,255,0.06)",
+          boxShadow: scrolled
+            ? "0 8px 30px -8px rgba(0,0,0,0.6)"
+            : "0 4px 20px -4px rgba(0,0,0,0.4)",
         }}
       >
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2.5 shrink-0">
-          <img
-            src={moLogo}
-            alt="MONAER"
-            className="w-8 h-8 rounded-lg object-contain"
-          />
+        <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
+          <div className="relative">
+            <img
+              src={moLogo}
+              alt="MONAER"
+              className="w-8 h-8 rounded-lg object-contain relative z-10"
+            />
+            <div
+              className="absolute inset-0 rounded-lg opacity-0 group-active:opacity-60 transition-opacity duration-300"
+              style={{ background: ACCENT, filter: "blur(10px)" }}
+            />
+          </div>
           <span
             className="text-[15px] font-black select-none"
             style={{ fontFamily: FONT_BRAND, letterSpacing: "0.06em" }}
@@ -99,69 +129,91 @@ const Header = () => {
           </span>
         </Link>
 
-        {/* Right icons (Kengaytirildi va qulaylashtirildi) */}
-        <div className="flex items-center gap-2">
+        {/* Right icons: Sevimli va Profil, orasida chiziqcha */}
+        <div className="flex items-center gap-1">
           <Link
             to="/favorites"
-            className="relative w-10 h-10 flex items-center justify-center rounded-xl transition-all"
+            className="relative w-9 h-9 flex items-center justify-center rounded-xl"
             style={{
-              background:
-                location.pathname === "/favorites"
-                  ? "rgba(18,198,168,0.12)"
-                  : "rgba(255,255,255,0.03)",
               color:
                 location.pathname === "/favorites"
                   ? ACCENT
-                  : "rgba(255,255,255,0.6)",
+                  : "rgba(255,255,255,0.55)",
             }}
           >
-            <Heart
-              size={20}
-              strokeWidth={1.9}
-              fill={location.pathname === "/favorites" ? ACCENT : "none"}
-            />
+            <motion.div whileTap={{ scale: 0.82 }} transition={springSnap}>
+              <Heart
+                size={20}
+                strokeWidth={1.9}
+                fill={location.pathname === "/favorites" ? ACCENT : "none"}
+              />
+            </motion.div>
             <Badge count={favoritesCount} />
           </Link>
-          <Link
-            to="/backet"
-            className="relative w-10 h-10 flex items-center justify-center rounded-xl transition-all"
-            style={{
-              background:
-                location.pathname === "/backet"
-                  ? "rgba(18,198,168,0.12)"
-                  : "rgba(255,255,255,0.03)",
-              color:
-                location.pathname === "/backet"
-                  ? ACCENT
-                  : "rgba(255,255,255,0.6)",
-            }}
-          >
-            <ShoppingBag size={20} strokeWidth={1.9} />
-            <Badge count={totalItems} />
-          </Link>
+
+          <div className="w-[1px] h-4 bg-white/15 mx-1" />
+
+          {user ? (
+            <motion.button
+              whileTap={{ scale: 0.82 }}
+              transition={springSnap}
+              onClick={logout}
+              className="relative w-9 h-9 flex items-center justify-center rounded-xl text-white/55 active:text-white"
+            >
+              <UserRound size={20} strokeWidth={1.9} />
+            </motion.button>
+          ) : (
+            <Link
+              to="/login"
+              className="relative w-9 h-9 flex items-center justify-center rounded-xl"
+              style={{
+                color:
+                  location.pathname === "/login"
+                    ? ACCENT
+                    : "rgba(255,255,255,0.55)",
+              }}
+            >
+              <motion.div whileTap={{ scale: 0.82 }} transition={springSnap}>
+                <UserRound size={20} strokeWidth={1.9} />
+              </motion.div>
+            </Link>
+          )}
         </div>
-      </header>
+      </motion.header>
 
       {/* ========== DESKTOP HEADER ========== */}
-      <header
-        className="hidden md:flex fixed top-4 left-1/2 -translate-x-1/2 z-50 items-center justify-between rounded-3xl px-6 py-3 w-[calc(100%-3rem)] max-w-5xl border"
+      <motion.header
+        animate={{
+          paddingTop: scrolled ? 10 : 14,
+          paddingBottom: scrolled ? 10 : 14,
+        }}
+        transition={springSoft}
+        className="hidden md:flex fixed top-4 left-1/2 -translate-x-1/2 z-50 items-center justify-between rounded-3xl px-6 w-[calc(100%-3rem)] max-w-5xl border"
         style={{
           fontFamily: FONT_UI,
-          background: "rgba(14,16,24,0.82)",
-          backdropFilter: "blur(24px)",
-          WebkitBackdropFilter: "blur(24px)",
-          borderColor: "rgba(255,255,255,0.08)",
+          background: "rgba(13,15,22,0.78)",
+          backdropFilter: "blur(26px) saturate(160%)",
+          WebkitBackdropFilter: "blur(26px) saturate(160%)",
+          borderColor: scrolled
+            ? "rgba(18,198,168,0.18)"
+            : "rgba(255,255,255,0.08)",
           boxShadow: scrolled
-            ? "0 20px 50px -12px rgba(0,0,0,0.7), 0 0 0 1px rgba(18,198,168,0.12)"
+            ? "0 24px 50px -14px rgba(0,0,0,0.75), 0 0 0 1px rgba(18,198,168,0.1)"
             : "0 12px 30px -10px rgba(0,0,0,0.5)",
         }}
       >
-        <Link to="/" className="flex items-center gap-2.5 shrink-0">
-          <img
-            src={moLogo}
-            alt="MONAER"
-            className="w-8 h-8 rounded-lg object-contain"
-          />
+        <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
+          <div className="relative">
+            <img
+              src={moLogo}
+              alt="MONAER"
+              className="w-8 h-8 rounded-lg object-contain relative z-10"
+            />
+            <div
+              className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-70 transition-opacity duration-300"
+              style={{ background: ACCENT, filter: "blur(12px)" }}
+            />
+          </div>
           <span
             className="text-[16px] font-black select-none"
             style={{ fontFamily: FONT_BRAND, letterSpacing: "0.08em" }}
@@ -172,22 +224,30 @@ const Header = () => {
           </span>
         </Link>
 
-        <ul className="flex items-center gap-1">
+        <ul className="flex items-center gap-1 relative">
           {NAV_LINKS.map((link) => {
             const active = isActive(link.href);
             return (
-              <li key={link.href}>
+              <li key={link.href} className="relative">
                 <Link
                   to={link.href}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-[13px] font-semibold transition-all duration-200"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-[13px] font-semibold relative z-10 transition-colors duration-200"
                   style={{
-                    color: active ? ACCENT : "rgba(255,255,255,0.5)",
-                    background: active
-                      ? "rgba(18,198,168,0.12)"
-                      : "transparent",
+                    color: active ? "#0A0C12" : "rgba(255,255,255,0.55)",
                   }}
                 >
-                  <link.icon size={16} strokeWidth={active ? 2.2 : 1.8} />
+                  {active && (
+                    <motion.div
+                      layoutId="desktop-nav-pill"
+                      transition={springSoft}
+                      className="absolute inset-0 rounded-xl -z-10"
+                      style={{
+                        background: ACCENT,
+                        boxShadow: `0 4px 18px ${ACCENT}55`,
+                      }}
+                    />
+                  )}
+                  <link.icon size={16} strokeWidth={active ? 2.3 : 1.8} />
                   {link.label}
                 </Link>
               </li>
@@ -195,10 +255,10 @@ const Header = () => {
           })}
         </ul>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <Link
             to="/favorites"
-            className="relative w-9 h-9 flex items-center justify-center rounded-full transition-colors"
+            className="relative w-9 h-9 flex items-center justify-center rounded-full"
             style={{
               color:
                 location.pathname === "/favorites"
@@ -206,16 +266,22 @@ const Header = () => {
                   : "rgba(255,255,255,0.45)",
             }}
           >
-            <Heart
-              size={17}
-              strokeWidth={1.9}
-              fill={location.pathname === "/favorites" ? ACCENT : "none"}
-            />
+            <motion.div
+              whileHover={{ scale: 1.12 }}
+              whileTap={{ scale: 0.88 }}
+              transition={springSnap}
+            >
+              <Heart
+                size={17}
+                strokeWidth={1.9}
+                fill={location.pathname === "/favorites" ? ACCENT : "none"}
+              />
+            </motion.div>
             <Badge count={favoritesCount} />
           </Link>
           <Link
             to="/backet"
-            className="relative w-9 h-9 flex items-center justify-center rounded-full transition-colors"
+            className="relative w-9 h-9 flex items-center justify-center rounded-full"
             style={{
               color:
                 location.pathname === "/backet"
@@ -223,43 +289,60 @@ const Header = () => {
                   : "rgba(255,255,255,0.45)",
             }}
           >
-            <ShoppingBag size={17} strokeWidth={1.9} />
+            <motion.div
+              whileHover={{ scale: 1.12 }}
+              whileTap={{ scale: 0.88 }}
+              transition={springSnap}
+            >
+              <ShoppingBag size={17} strokeWidth={1.9} />
+            </motion.div>
             <Badge count={totalItems} />
           </Link>
-          <div className="w-px h-5 bg-white/10" />
+          <div className="w-px h-5 bg-white/10 mx-0.5" />
           {user ? (
-            <button
+            <motion.button
+              whileHover={{ scale: 1.12 }}
+              whileTap={{ scale: 0.88 }}
+              transition={springSnap}
               onClick={logout}
-              className="w-9 h-9 flex items-center justify-center rounded-full text-white/45 hover:text-white transition-colors"
+              className="w-9 h-9 flex items-center justify-center rounded-full text-white/45 hover:text-white"
             >
               <UserRound size={17} strokeWidth={1.9} />
-            </button>
+            </motion.button>
           ) : (
             <Link
               to="/login"
               className="w-9 h-9 flex items-center justify-center rounded-full text-white/45 hover:text-white transition-colors"
             >
-              <UserRound size={17} strokeWidth={1.9} />
+              <motion.div
+                whileHover={{ scale: 1.12 }}
+                whileTap={{ scale: 0.88 }}
+                transition={springSnap}
+              >
+                <UserRound size={17} strokeWidth={1.9} />
+              </motion.div>
             </Link>
           )}
         </div>
-      </header>
+      </motion.header>
 
       {/* ========== MOBILE BOTTOM NAV ========== */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 pb-safe">
         <div
-          className="mx-3 mb-3 rounded-2xl border transition-all"
+          className="mx-3 mb-3 rounded-[26px] border"
           style={{
             fontFamily: FONT_UI,
-            background: "rgba(12,15,22,0.96)",
-            backdropFilter: "blur(24px)",
-            WebkitBackdropFilter: "blur(24px)",
+            background: "rgba(11,13,20,0.97)",
+            backdropFilter: "blur(26px) saturate(160%)",
+            WebkitBackdropFilter: "blur(26px) saturate(160%)",
             borderColor: "rgba(255,255,255,0.08)",
             boxShadow:
-              "0 -10px 30px -5px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04)",
+              "0 -12px 34px -6px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04)",
           }}
         >
-          <div className="flex items-stretch justify-around py-1">
+          {/* Barcha itemlar bitta balandlikda (h-16), shu tufayli label'lar bir chiziqda turadi.
+             Markazdagi tugma faqat ikonka darajasida translate-y bilan ko'tariladi. */}
+          <div className="flex items-stretch justify-around px-1.5">
             {BOTTOM_NAV.map((item) => {
               const active = isActive(item.href);
               const count =
@@ -270,57 +353,106 @@ const Header = () => {
                     : 0;
               const Icon = item.icon;
 
+              if (item.isCenter) {
+                return (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    className="flex-1 flex flex-col items-center justify-center gap-1 h-16 relative"
+                    style={{
+                      WebkitTapHighlightColor: "transparent",
+                      touchAction: "manipulation",
+                    }}
+                  >
+                    <motion.div
+                      whileTap={{ scale: 0.9 }}
+                      transition={springSnap}
+                      className="relative w-14 h-14 rounded-full flex items-center justify-center -translate-y-6"
+                      style={{
+                        background: active
+                          ? ACCENT
+                          : "linear-gradient(145deg, #181B22, #0D0F14)",
+                        border: `1.5px solid ${ACCENT}`,
+                        boxShadow: "0 6px 16px -4px rgba(0,0,0,0.6)",
+                      }}
+                    >
+                      {/* Nafas oluvchi porlash halqasi */}
+                      <motion.span
+                        className="absolute inset-0 rounded-full pointer-events-none"
+                        style={{ background: ACCENT }}
+                        animate={{
+                          opacity: [0.35, 0, 0.35],
+                          scale: [1, 1.45, 1],
+                        }}
+                        transition={{
+                          duration: 2.6,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                        }}
+                      />
+                      <div className="relative">
+                        <Icon
+                          size={23}
+                          strokeWidth={2.2}
+                          style={{ color: active ? "#0A0C12" : ACCENT }}
+                        />
+                        <Badge count={count} />
+                      </div>
+                    </motion.div>
+                    <span
+                      className="text-[10px] font-semibold tracking-tight -mt-4"
+                      style={{
+                        color: active ? ACCENT : "rgba(255,255,255,0.55)",
+                      }}
+                    >
+                      {item.label}
+                    </span>
+                  </Link>
+                );
+              }
+
               return (
                 <Link
                   key={item.href}
                   to={item.href}
-                  className="flex-1 flex flex-col items-center justify-center py-2 relative group active:scale-95 transition-transform duration-150"
+                  className="flex-1 flex flex-col items-center justify-center gap-1 h-16"
                   style={{
                     WebkitTapHighlightColor: "transparent",
                     touchAction: "manipulation",
                   }}
                 >
-                  {/* Active holat uchun chiroyli fon va tepasidagi chiziqcha */}
-                  {active && (
-                    <motion.div
-                      layoutId="activeIndicator"
-                      className="absolute inset-x-2 inset-y-1 rounded-xl -z-10"
-                      style={{ background: "rgba(18,198,168,0.12)" }}
-                      transition={{
-                        type: "spring",
-                        stiffness: 380,
-                        damping: 30,
-                      }}
-                    />
-                  )}
-
-                  {active && (
-                    <div
-                      className="absolute -top-1 left-1/2 -translate-x-1/2 w-6 h-[3px] rounded-full"
-                      style={{
-                        background: ACCENT,
-                        boxShadow: `0 2px 10px ${ACCENT}`,
-                      }}
-                    />
-                  )}
-
-                  <div className="relative mb-0.5">
+                  <motion.div
+                    whileTap={{ scale: 0.86 }}
+                    transition={springSnap}
+                    className="relative"
+                  >
                     <Icon
                       size={20}
-                      strokeWidth={active ? 2.5 : 1.8}
+                      strokeWidth={active ? 2.3 : 1.7}
                       fill={active && item.icon === Heart ? ACCENT : "none"}
                       style={{
                         color: active ? ACCENT : "rgba(255,255,255,0.4)",
                       }}
                     />
                     <Badge count={count} />
-                  </div>
+                  </motion.div>
                   <span
-                    className="text-[10px] font-semibold tracking-tight leading-none"
+                    className="text-[10px] font-medium tracking-tight leading-none"
                     style={{ color: active ? ACCENT : "rgba(255,255,255,0.4)" }}
                   >
                     {item.label}
                   </span>
+                  {active && (
+                    <motion.div
+                      layoutId="mobile-nav-dot"
+                      transition={springSoft}
+                      className="w-1 h-1 rounded-full"
+                      style={{
+                        background: ACCENT,
+                        boxShadow: `0 0 6px ${ACCENT}`,
+                      }}
+                    />
+                  )}
                 </Link>
               );
             })}

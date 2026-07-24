@@ -4,13 +4,10 @@ import CatalogHeader from "../components/catalog/CatalogHeader";
 import CatalogSearch from "../components/catalog/CatalogSearch";
 import CatalogFilters from "../components/catalog/CatalogFilters";
 import CatalogGrid from "../components/catalog/CatalogGrid";
-import CatalogSkeleton from "../components/skeletons/CatalogSkeleton";
-import useSimulatedLoading from "../hooks/useSimulatedLoading";
 
 const categories = ["All", ...new Set(products.map((p) => p.category))];
 
 const Catalog = memo(() => {
-  const loading = useSimulatedLoading(1200);
   const [activeCategory, setActiveCategory] = useState("All");
   const [search, setSearch] = useState("");
 
@@ -26,8 +23,6 @@ const Catalog = memo(() => {
       }),
     [activeCategory, search]
   );
-
-  if (loading) return <CatalogSkeleton />;
 
   const searchKey = `${activeCategory}-${search}`;
 

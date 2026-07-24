@@ -5,8 +5,6 @@ import { Link } from "react-router-dom";
 import { useFavoriteIds } from "../context/FavoritesContext";
 import CardDesign from "../components/CardDesign";
 import products from "../data/product.json";
-import FavoritesSkeleton from "../components/skeletons/FavoritesSkeleton";
-import useSimulatedLoading from "../hooks/useSimulatedLoading";
 
 const ACCENT = "#12C6A8";
 
@@ -28,15 +26,12 @@ const item = {
 };
 
 const Favorites = () => {
-  const loading = useSimulatedLoading(1000);
   const favoriteIds = useFavoriteIds();
 
   const favoriteProducts = useMemo(
     () => products.filter((p) => favoriteIds.includes(p.id)),
     [favoriteIds]
   );
-
-  if (loading) return <FavoritesSkeleton />;
 
   if (favoriteProducts.length === 0) {
     return (
