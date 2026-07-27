@@ -1,5 +1,3 @@
-import { motion } from "framer-motion";
-
 const ACCENT = "#12C6A8";
 
 const WORDS = [

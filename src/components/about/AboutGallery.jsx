@@ -1,5 +1,4 @@
-import { useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { X } from "lucide-react";
 import SectionLabel from "../ui/SectionLabel";
 
@@ -20,26 +19,30 @@ const PHOTOS = [
   { src: photo5, alt: "Sifat kafolati" },
 ];
 
-const GLASS_BTN = {
-  background: "rgba(10,14,20,0.45)",
-  backdropFilter: "blur(14px)",
-  WebkitBackdropFilter: "blur(14px)",
-  border: "1px solid rgba(255,255,255,0.2)",
-  boxShadow: "0 2px 10px rgba(0,0,0,0.35)",
-};
-
 const AboutGallery = () => {
   const [selected, setSelected] = useState(null);
+  const overlayRef = useRef(null);
 
   const open = useCallback((photo) => setSelected(photo), []);
   const close = useCallback(() => setSelected(null), []);
 
+  useEffect(() => {
+    if (!selected) return;
+    const handleEsc = (e) => { if (e.key === "Escape") close(); };
+    document.addEventListener("keydown", handleEsc);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", handleEsc);
+      document.body.style.overflow = "";
+    };
+  }, [selected, close]);
+
   return (
     <>
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-10 sm:py-24">
+      <section className="max-w-6xl mx-auto px-5 sm:px-6 md:px-8 py-10 sm:py-24">
         <div className="text-center mb-8 sm:mb-14">
           <SectionLabel>Faoliyat</SectionLabel>
-          <h2 className="font-display text-2xl sm:text-4xl md:text-5xl font-bold tracking-tight">
+          <h2 className="font-display text-[22px] sm:text-4xl md:text-5xl font-bold tracking-tight">
             <span className="text-white">Bizning </span>
             <span className="gradient-text">Fao</span>
             <span className="text-white">liyatlarimiz</span>
@@ -48,67 +51,54 @@ const AboutGallery = () => {
 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
           {PHOTOS.map((photo, i) => (
-            <motion.div
+            <div
               key={i}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.5, delay: i * 0.08 }}
-              whileHover={{ y: -4, scale: 1.02 }}
               onClick={() => open(photo)}
               className="group relative rounded-xl sm:rounded-2xl overflow-hidden cursor-pointer aspect-[4/3]"
               style={{ border: `1px solid ${BORDER}` }}
             >
-
               <img
                 src={photo.src}
                 alt={photo.alt}
                 loading="lazy"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                <p className="text-[10px] sm:text-sm font-semibold text-white font-body">{photo.alt}</p>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-4 sm:translate-y-full sm:group-hover:translate-y-0 transition-transform duration-300">
+                <p className="text-[11px] sm:text-sm font-semibold text-white font-body">{photo.alt}</p>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </section>
 
-      <AnimatePresence>
-        {selected && (
-          <motion.div
-            key="lightbox-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-[300] flex items-center justify-center p-3 sm:p-8"
+      {selected && (
+        <div
+          ref={overlayRef}
+          className="fixed inset-0 z-[300] flex items-center justify-center p-3 sm:p-8"
+          style={{ animation: "fadeInUp 0.2s ease forwards" }}
+          onClick={close}
+        >
+          <div className="absolute inset-0 bg-black/85 backdrop-blur-sm" />
+          <button
             onClick={close}
+            className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-90"
+            style={{
+              background: "rgba(10,14,20,0.45)",
+              border: "1px solid rgba(255,255,255,0.2)",
+            }}
           >
-            <div className="absolute inset-0 bg-black/85 backdrop-blur-md" />
-            <button
-              onClick={close}
-              className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full flex items-center justify-center"
-              style={GLASS_BTN}
-            >
-              <X size={18} className="text-white/80" />
-            </button>
-            <motion.img
-              key={selected.src}
-              initial={{ scale: 0.85, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.85, opacity: 0 }}
-              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              src={selected.src}
-              alt={selected.alt}
-              onClick={(e) => e.stopPropagation()}
-              className="relative max-w-full max-h-[80vh] rounded-xl sm:rounded-2xl object-contain"
-              style={{ boxShadow: "0 40px 90px -20px rgba(0,0,0,0.8)" }}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <X size={18} className="text-white/80" />
+          </button>
+          <img
+            src={selected.src}
+            alt={selected.alt}
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-w-full max-h-[80vh] rounded-xl sm:rounded-2xl object-contain"
+            style={{ boxShadow: "0 40px 90px -20px rgba(0,0,0,0.8)", animation: "fadeInUp 0.25s ease forwards" }}
+          />
+        </div>
+      )}
     </>
   );
 };

@@ -114,20 +114,20 @@ const CardDesign = memo(
           style={GPU_LAYER}
         >
           {/* Image */}
-          <div className="relative aspect-[16/10] sm:aspect-[4/3] overflow-hidden bg-black/15">
+          <div className="relative aspect-[4/3] overflow-hidden bg-black/15">
             <img
               src={image || placeholderImg}
               alt={name}
               loading="lazy"
               decoding="async"
-              className="absolute inset-0 w-full h-full object-contain p-1 sm:object-cover sm:p-0 transition-transform duration-500 ease-out will-change-transform group-hover:scale-105"
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out will-change-transform group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent opacity-70 group-hover:opacity-50 transition-opacity duration-500 pointer-events-none" />
 
             <div className="absolute top-0 left-0 right-0 flex items-start justify-between p-1.5 sm:p-2.5 z-10">
               {badge && BADGE_STYLES[badge] ? (
                 <span
-                  className="px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[8px] sm:text-[10px] font-bold uppercase tracking-wider"
+                  className="px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-bold uppercase tracking-wider"
                   style={{
                     background: BADGE_STYLES[badge].bg,
                     color: BADGE_STYLES[badge].text,
@@ -157,7 +157,7 @@ const CardDesign = memo(
                     e.stopPropagation();
                     toggleFavorite(id);
                   }}
-                  className="card-icon-btn w-6 h-6 sm:w-9 sm:h-9 rounded-full flex items-center justify-center"
+                  className="card-icon-btn w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center"
                   style={
                     liked
                       ? {
@@ -169,7 +169,7 @@ const CardDesign = memo(
                   }
                 >
                   <Heart
-                    size={12}
+                    size={13}
                     strokeWidth={2}
                     className="sm:hidden"
                     style={{ color: liked ? "#0A0E14" : "#fff", fill: liked ? "#0A0E14" : "transparent" }}
@@ -186,7 +186,7 @@ const CardDesign = memo(
 
             {hasDiscount && (
               <span
-                className="absolute bottom-1.5 left-1.5 sm:bottom-2 sm:left-2 z-10 px-1.5 py-0.5 rounded-full text-[8px] sm:text-[10px] font-bold text-white"
+                className="absolute bottom-1.5 left-1.5 sm:bottom-2 sm:left-2 z-10 px-1.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold text-white"
                 style={{ background: "linear-gradient(135deg, #EF4444, #DC2626)", boxShadow: "0 4px 15px -3px rgba(239,68,68,0.5)" }}
               >
                 -{discount}%
@@ -195,13 +195,13 @@ const CardDesign = memo(
           </div>
 
           {/* Content */}
-          <div className="relative p-2.5 sm:p-4 flex flex-col gap-1 sm:gap-2 flex-1">
+          <div className="relative p-3 sm:p-4 flex flex-col gap-1 sm:gap-2 flex-1">
             {carModel && (
-              <p className="text-[8px] sm:text-[10px] font-semibold uppercase tracking-[0.08em] truncate" style={{ color: "#6B7280" }}>
+              <p className="text-[9px] sm:text-[10px] font-semibold uppercase tracking-[0.08em] truncate" style={{ color: "#6B7280" }}>
                 {carModel}
               </p>
             )}
-            <h3 className="text-[12px] sm:text-[14px] text-white font-semibold leading-tight line-clamp-1">{name}</h3>
+            <h3 className="text-[13px] sm:text-[14px] text-white font-semibold leading-tight line-clamp-1">{name}</h3>
             {description && (
               <p className="hidden sm:block text-[12px] leading-relaxed line-clamp-2" style={{ color: "#9CA3AF" }}>
                 {description}
@@ -209,7 +209,7 @@ const CardDesign = memo(
             )}
             <div className="flex items-center gap-1 sm:gap-1.5">
               <StarsSmall rating={rating} />
-              <span className="text-[9px] sm:text-[10px] font-medium" style={{ color: "#9CA3AF" }}>
+              <span className="text-[10px] sm:text-[10px] font-medium" style={{ color: "#9CA3AF" }}>
                 {rating}
               </span>
               {reviews > 0 && (
@@ -232,12 +232,12 @@ const CardDesign = memo(
                       {oldPrice}
                     </span>
                   )}
-                  <span className="text-sm sm:text-xl font-bold tracking-tight" style={{ color: ACCENT }}>
+                  <span className="text-[15px] sm:text-xl font-bold tracking-tight" style={{ color: ACCENT }}>
                     {currency}
                     {price}
                   </span>
                 </div>
-                <span className="text-[8px] sm:text-[10px] font-medium truncate" style={{ color: "#9CA3AF" }}>
+                <span className="text-[9px] sm:text-[10px] font-medium truncate" style={{ color: "#9CA3AF" }}>
                   {priceUZS ? priceUZS.toLocaleString("uz-UZ") : ""} {currencyUZS}
                   {hasDiscountUZS && oldPriceUZS && (
                     <span className="line-through ml-1 sm:ml-1.5" style={{ color: "#6B7280" }}>

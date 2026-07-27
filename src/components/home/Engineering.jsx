@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Zap, Wind, Compass, ShieldCheck } from "lucide-react";
 import SectionLabel from "../ui/SectionLabel";
 
@@ -28,30 +27,23 @@ const Engineering = () => (
       </p>
     </div>
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
-      {ITEMS.map((item, i) => {
+      {ITEMS.map((item) => {
         const Icon = item.icon;
         return (
-          <motion.div
+          <div
             key={item.title}
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: i * 0.08 }}
-            whileHover={{ y: -6, borderColor: `${ACCENT}55` }}
-            className="rounded-2xl p-4 sm:p-6 md:p-8"
+            className="rounded-2xl p-4 sm:p-6 md:p-8 transition-all duration-300 hover:-translate-y-1.5"
             style={{ border: `1px solid ${BORDER}`, background: PANEL_BG }}
           >
-            <motion.div
-              whileHover={{ scale: 1.15, rotate: 8, borderColor: `${ACCENT}aa` }}
-              transition={{ type: "spring", stiffness: 400, damping: 12 }}
-              className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl border flex items-center justify-center mb-4 sm:mb-6"
+            <div
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl border flex items-center justify-center mb-4 sm:mb-6 transition-transform duration-300 hover:scale-110"
               style={{ borderColor: BORDER }}
             >
               <Icon strokeWidth={1.5} className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: ACCENT }} />
-            </motion.div>
+            </div>
             <h3 className="font-display text-base sm:text-lg text-white font-semibold mb-1.5 sm:mb-2">{item.title}</h3>
             <p className="text-xs sm:text-sm leading-relaxed font-body" style={{ color: TEXT_SECONDARY }}>{item.desc}</p>
-          </motion.div>
+          </div>
         );
       })}
     </div>

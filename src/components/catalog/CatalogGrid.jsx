@@ -1,40 +1,31 @@
 import React, { memo } from "react";
-import { motion } from "framer-motion";
+import { SearchX } from "lucide-react";
 import CardDesign from "../CardDesign";
 
-const GPU_LAYER = { transform: "translateZ(0)", willChange: "transform" };
+const ACCENT = "#12C6A8";
 
-const container = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.05, delayChildren: 0.05 } },
-};
-
-const item = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] } },
-};
-
-const CatalogGrid = memo(({ products, searchKey }) => {
+const CatalogGrid = memo(({ products }) => {
   if (products.length === 0) {
     return (
-      <div className="text-center py-20">
-        <p className="text-white/30 text-sm font-body">
-          Mahsulot topilmadi. Boshqa qidiruv yoki kategoriyani sinab ko'ring.
-        </p>
+      <div className="flex flex-col items-center justify-center py-24 gap-4">
+        <div
+          className="w-16 h-16 rounded-2xl flex items-center justify-center"
+          style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}
+        >
+          <SearchX size={28} strokeWidth={1.5} style={{ color: "rgba(255,255,255,0.15)" }} />
+        </div>
+        <div className="text-center">
+          <p className="text-white/40 text-sm font-semibold mb-1">Mahsulot topilmadi</p>
+          <p className="text-white/20 text-xs">Boshqa qidiruv so'zi yoki kategoriyani sinab ko'ring</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <motion.div
-      key={searchKey}
-      variants={container}
-      initial="hidden"
-      animate="visible"
-      className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-5 xl:gap-6"
-    >
+    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-5 xl:gap-6">
       {products.map((product) => (
-        <motion.div key={product.id} variants={item} style={GPU_LAYER} className="h-full">
+        <div key={product.id} className="h-full">
           <CardDesign
             id={product.id}
             name={product.name}
@@ -51,9 +42,9 @@ const CatalogGrid = memo(({ products, searchKey }) => {
             badge={product.badge}
             carModel={product.carModel}
           />
-        </motion.div>
+        </div>
       ))}
-    </motion.div>
+    </div>
   );
 });
 

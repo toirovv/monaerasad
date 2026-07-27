@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { useAuth } from '../context/useAuth'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import useSimulatedLoading from '../hooks/useSimulatedLoading'
+import LoginSkeleton from '../components/skeletons/LoginSkeleton'
 
 const ACCENT = "#12C6A8"
 
@@ -9,6 +10,7 @@ const Login = () => {
   const { login } = useAuth()
   const navigate = useNavigate()
   const [name, setName] = useState('')
+  const loading = useSimulatedLoading(600)
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -17,11 +19,12 @@ const Login = () => {
     navigate('/')
   }
 
+  if (loading) return <LoginSkeleton />
+
   return (
-    <motion.section
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+    <section
       className="min-h-screen flex items-center justify-center px-4 pt-24"
+      style={{ animation: "fadeInUp 0.5s ease forwards" }}
     >
       <form onSubmit={handleSubmit}
         className="w-full max-w-sm rounded-[28px] p-8"
@@ -49,7 +52,7 @@ const Login = () => {
           Davom etish
         </button>
       </form>
-    </motion.section>
+    </section>
   )
 }
 

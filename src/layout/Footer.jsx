@@ -1,5 +1,4 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { memo } from "react";
 import { Link } from "react-router-dom";
 import {
   Send,
@@ -13,7 +12,6 @@ import {
 } from "lucide-react";
 
 const ACCENT = "#12C6A8";
-
 const FONT_BRAND = "'Orbitron', sans-serif";
 const FONT_UI = "'Inter', sans-serif";
 
@@ -26,30 +24,10 @@ const SHADOW_ICON_BOX = "0 2px 8px -2px rgba(18,198,168,0.18)";
 const SHADOW_CTA = "0 8px 22px -6px rgba(18,198,168,0.45)";
 
 const CONTACTS = [
-  {
-    icon: Phone,
-    text: "+998 95 034-43-43",
-    href: "tel:+998950344343",
-    sub: "Qo'ng'iroq qiling",
-  },
-  {
-    icon: Send,
-    text: "@monaer_uz",
-    href: "https://t.me/monaer_uz",
-    sub: "Telegram",
-  },
-  {
-    icon: Mail,
-    text: "info@monaer.uz",
-    href: "mailto:info@monaer.uz",
-    sub: "Elektron pochta",
-  },
-  {
-    icon: MapPin,
-    text: "Toshkent, O'zbekiston",
-    href: "https://maps.google.com",
-    sub: "Manzil",
-  },
+  { icon: Phone, text: "+998 95 034-43-43", href: "tel:+998950344343", sub: "Qo'ng'iroq qiling" },
+  { icon: Send, text: "@monaer_uz", href: "https://t.me/monaer_uz", sub: "Telegram" },
+  { icon: Mail, text: "info@monaer.uz", href: "mailto:info@monaer.uz", sub: "Elektron pochta" },
+  { icon: MapPin, text: "Toshkent, O'zbekiston", href: "https://maps.google.com", sub: "Manzil" },
 ];
 
 const BADGES = [
@@ -63,82 +41,47 @@ const SOCIALS = [
   { label: "Instagram", href: "https://instagram.com" },
 ];
 
-const col = {
-  hidden: { opacity: 0, y: 16 },
-  visible: (i = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] },
-  }),
-};
-
 const IconBox = ({ icon: Icon }) => (
   <div
     className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-110"
     style={{
-      background:
-        "linear-gradient(135deg, rgba(18,198,168,0.14), rgba(18,198,168,0.04))",
+      background: "linear-gradient(135deg, rgba(18,198,168,0.14), rgba(18,198,168,0.04))",
       border: "1px solid rgba(18,198,168,0.18)",
       boxShadow: SHADOW_ICON_BOX,
     }}
   >
-    <Icon
-      size={FOOTER_ICON_SIZE}
-      strokeWidth={FOOTER_ICON_STROKE}
-      style={{ color: ACCENT }}
-    />
+    <Icon size={FOOTER_ICON_SIZE} strokeWidth={FOOTER_ICON_STROKE} style={{ color: ACCENT }} />
   </div>
 );
 
-const Footer = () => {
+const Footer = memo(() => {
   return (
     <footer className="relative z-10 mt-16 sm:mt-24 px-3 sm:px-6 md:px-8 lg:px-14 pb-4 sm:pb-6">
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ type: "spring", stiffness: 200, damping: 26 }}
+      <div
         className="relative mx-auto max-w-6xl rounded-[22px] sm:rounded-[28px] border overflow-hidden"
         style={{
           fontFamily: FONT_UI,
-          background:
-            "linear-gradient(160deg, rgba(26,29,38,0.7) 0%, rgba(10,12,18,0.55) 100%)",
-          backdropFilter: "blur(28px) saturate(150%)",
-          WebkitBackdropFilter: "blur(28px) saturate(150%)",
+          background: "linear-gradient(160deg, rgba(26,29,38,0.7) 0%, rgba(10,12,18,0.55) 100%)",
           borderColor: "rgba(255,255,255,0.09)",
           boxShadow: SHADOW_CARD,
         }}
       >
-        {/* Yuqori shisha qirrasi */}
         <div
           className="pointer-events-none absolute top-0 left-8 right-8 h-px"
-          style={{
-            background:
-              "linear-gradient(90deg, transparent, rgba(18,198,168,0.45), transparent)",
-          }}
+          style={{ background: "linear-gradient(90deg, transparent, rgba(18,198,168,0.45), transparent)" }}
         />
-
-        {/* Ambient blob */}
         <div
-          className="pointer-events-none absolute -top-32 left-[12%] w-72 h-72 rounded-full blur-[100px] opacity-[0.05]"
+          className="pointer-events-none absolute -top-32 left-[12%] w-72 h-72 rounded-full blur-[100px] opacity-[0.05] max-sm:w-40 max-sm:h-40 max-sm:blur-[50px]"
           style={{ background: ACCENT }}
         />
         <div
-          className="pointer-events-none absolute -bottom-24 right-[8%] w-64 h-64 rounded-full blur-[90px] opacity-[0.04]"
+          className="pointer-events-none absolute -bottom-24 right-[8%] w-64 h-64 rounded-full blur-[90px] opacity-[0.04] max-sm:w-36 max-sm:h-36 max-sm:blur-[45px]"
           style={{ background: ACCENT }}
         />
 
         <div className="relative px-5 sm:px-8 md:px-10 pt-10 sm:pt-14 pb-6 sm:pb-8">
-          {/* Grid: 3 ta haqiqiy ustunga moslab to'g'rilandi */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-6 lg:gap-12 mb-10 sm:mb-12">
-            {/* Ustun 1 — Brend */}
-            <motion.div
-              variants={col}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              custom={0}
-            >
+            <div className="text-center md:text-left">
               <Link to="/" className="inline-block mb-4">
                 <span
                   className="text-2xl sm:text-[26px] font-black tracking-[0.08em] select-none leading-none"
@@ -149,103 +92,72 @@ const Footer = () => {
                   <span className="text-white">NAER</span>
                 </span>
               </Link>
-              <p className="text-xs sm:text-sm text-white/35 leading-relaxed max-w-[260px] mb-5">
-                Sifatli avtomobil ehtiyot qismlari. 12 yillik tajriba va
-                ishonchli hamkorlik.
+              <p className="text-xs sm:text-sm text-white/35 leading-relaxed max-w-[260px] mb-5 mx-auto md:mx-0">
+                Sifatli avtomobil ehtiyot qismlari. 12 yillik tajriba va ishonchli hamkorlik.
               </p>
-              <Link
-                to="/catalog"
-                className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 hover:scale-[1.03] active:scale-95"
-                style={{
-                  fontFamily: FONT_UI,
-                  background: `linear-gradient(150deg, ${ACCENT}, #0E8F7B)`,
-                  color: "#06110D",
-                  boxShadow: SHADOW_CTA,
-                }}
-              >
-                Katalogga o'tish
-                <ArrowUpRight
-                  size={14}
-                  className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
-                />
-              </Link>
-            </motion.div>
+              <div className="flex justify-center md:justify-start">
+                <Link
+                  to="/catalog"
+                  className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-300 hover:scale-[1.03] active:scale-95"
+                  style={{
+                    fontFamily: FONT_UI,
+                    background: `linear-gradient(150deg, ${ACCENT}, #0E8F7B)`,
+                    color: "#06110D",
+                    boxShadow: SHADOW_CTA,
+                  }}
+                >
+                  Katalogga o'tish
+                  <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                </Link>
+              </div>
+            </div>
 
-            {/* Ustun 2 — Aloqa */}
-            <motion.div
-              variants={col}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              custom={1}
-            >
-              <h3 className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-white/25 mb-4 sm:mb-5">
+            <div>
+              <h3 className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-white/25 mb-4 sm:mb-5 text-center md:text-left">
                 aloqa
               </h3>
-              <ul className="space-y-3">
+              <ul className="space-y-2.5">
                 {CONTACTS.map((item, i) => (
                   <li key={i}>
                     <a
                       href={item.href}
-                      target={
-                        item.href.startsWith("http") ? "_blank" : undefined
-                      }
+                      target={item.href.startsWith("http") ? "_blank" : undefined}
                       rel="noopener noreferrer"
-                      className="group flex items-center gap-3 transition-all duration-300"
+                      className="group flex items-center justify-between gap-3 transition-all duration-300 py-1"
                     >
                       <IconBox icon={item.icon} />
-                      <div>
+                      <div className="flex-1 text-right">
                         <span className="text-xs sm:text-sm text-white/55 group-hover:text-white/85 transition-colors duration-300 block leading-tight">
                           {item.text}
                         </span>
-                        <span className="text-[10px] text-white/25">
-                          {item.sub}
-                        </span>
+                        <span className="text-[10px] text-white/25">{item.sub}</span>
                       </div>
                     </a>
                   </li>
                 ))}
               </ul>
-            </motion.div>
+            </div>
 
-            {/* Ustun 3 — Ishonch belgilari */}
-            <motion.div
-              variants={col}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              custom={2}
-            >
-              <h3 className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-white/25 mb-4 sm:mb-5">
+            <div>
+              <h3 className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-white/25 mb-4 sm:mb-5 text-center md:text-left">
                 ishonch
               </h3>
-              <ul className="space-y-3">
+              <ul className="space-y-2.5">
                 {BADGES.map((b) => (
-                  <li key={b.label} className="group flex items-center gap-3">
+                  <li key={b.label} className="group flex items-center justify-between gap-3 py-1">
                     <IconBox icon={b.icon} />
-                    <span className="text-xs sm:text-sm text-white/45 group-hover:text-white/70 transition-colors duration-300">
+                    <span className="flex-1 text-right text-xs sm:text-sm text-white/45 group-hover:text-white/70 transition-colors duration-300">
                       {b.label}
                     </span>
                   </li>
                 ))}
               </ul>
-            </motion.div>
+            </div>
           </div>
 
-          {/* Ajratuvchi chiziq */}
-          <div
-            className="h-px mb-6 sm:mb-8"
-            style={{ background: "rgba(255,255,255,0.06)" }}
-          />
+          <div className="h-px mb-6 sm:mb-8" style={{ background: "rgba(255,255,255,0.06)" }} />
 
-          {/* Pastki qator */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="flex flex-col sm:flex-row items-center justify-between gap-4"
-          >
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <span className="text-[10px] sm:text-[11px] text-white/20">
               &copy; 2026 MONAER. Barcha huquqlar himoyalangan.
             </span>
@@ -269,11 +181,12 @@ const Footer = () => {
                 </a>
               ))}
             </div>
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
+      </div>
     </footer>
   );
-};
+});
 
+Footer.displayName = "Footer";
 export default Footer;

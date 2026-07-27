@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import CountUpStat from "../ui/CountUpStat";
 
 const ACCENT = "#12C6A8";
@@ -25,14 +24,10 @@ const Stats = () => (
       }} />
     <div className="relative max-w-6xl mx-auto px-4 sm:px-6 md:px-8 grid grid-cols-2 sm:grid-cols-4 gap-y-8 gap-x-4 text-center">
       {STATS.map((s) => (
-        <motion.div key={s.label}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+        <div key={s.label}>
           <CountUpStat value={s.value} />
           <p className="text-xs uppercase tracking-wider mt-1.5 font-body" style={{ color: TEXT_SECONDARY }}>{s.label}</p>
-        </motion.div>
+        </div>
       ))}
     </div>
   </section>

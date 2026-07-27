@@ -1,4 +1,3 @@
-import { motion, AnimatePresence } from "framer-motion";
 import { Trash2, ShoppingBag, ArrowRight, ShieldCheck, Truck, RotateCcw } from "lucide-react";
 import { useCartItems, useCartTotals, useCartActions } from "../context/CartContext";
 import CartEmpty from "../components/cart/CartEmpty";
@@ -21,12 +20,7 @@ const Backet = () => {
       <div className="max-w-4xl mx-auto">
         <CartStepProgress currentStep={1} />
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="flex items-center justify-between mb-6 sm:mb-8"
-        >
+        <div className="flex items-center justify-between mb-6 sm:mb-8">
           <div className="flex items-center gap-3">
             <div
               className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center"
@@ -38,60 +32,43 @@ const Backet = () => {
               <ShoppingBag size={18} strokeWidth={2} style={{ color: ACCENT }} />
             </div>
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-                Savatcha
-              </h1>
-              <p className="text-[11px] sm:text-xs text-white/35 mt-0.5">
-                {totalItems} ta mahsulot tanlangan
-              </p>
+              <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Savatcha</h1>
+              <p className="text-[11px] sm:text-xs text-white/35 mt-0.5">{totalItems} ta mahsulot tanlangan</p>
             </div>
           </div>
 
-          <motion.button
-            whileTap={{ scale: 0.9 }}
+          <button
             onClick={clearCart}
-            className="flex items-center gap-1.5 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-medium text-red-400/70 hover:text-red-400 hover:bg-red-400/[0.08] transition-all duration-200"
+            className="flex items-center gap-1.5 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-medium text-red-400/70 hover:text-red-400 hover:bg-red-400/[0.08] active:scale-95 transition-all duration-200"
             style={{ border: "1px solid rgba(239,68,68,0.12)" }}
           >
             <Trash2 size={13} />
             <span className="hidden sm:inline">Tozalash</span>
-          </motion.button>
-        </motion.div>
+          </button>
+        </div>
 
         <div className="grid lg:grid-cols-[1fr_340px] gap-4 sm:gap-6 items-start">
           <div className="flex flex-col gap-2.5 sm:gap-3">
-            <AnimatePresence mode="popLayout">
-              {items.map((item, i) => (
-                <CartItem
-                  key={item.id}
-                  item={item}
-                  index={i}
-                  onRemove={removeItem}
-                  onUpdateQty={updateQty}
-                />
-              ))}
-            </AnimatePresence>
+            {items.map((item, i) => (
+              <CartItem
+                key={item.id}
+                item={item}
+                index={i}
+                onRemove={removeItem}
+                onUpdateQty={updateQty}
+              />
+            ))}
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.15 }}
-            className="lg:sticky lg:top-28"
-          >
+          <div className="lg:sticky lg:top-28">
             <div
               className="rounded-2xl sm:rounded-[20px] overflow-hidden"
               style={{
                 background: "linear-gradient(160deg, rgba(26,32,44,0.6) 0%, rgba(15,18,28,0.5) 100%)",
                 border: "1px solid rgba(255,255,255,0.06)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
               }}
             >
-              <div
-                className="h-[2px]"
-                style={{ background: `linear-gradient(90deg, transparent, ${ACCENT}66, transparent)` }}
-              />
+              <div className="h-[2px]" style={{ background: `linear-gradient(90deg, transparent, ${ACCENT}66, transparent)` }} />
 
               <div className="p-4 sm:p-6">
                 <h3 className="text-sm font-bold text-white mb-4">Buyurtma xulosasi</h3>
@@ -121,23 +98,17 @@ const Backet = () => {
                   </div>
                 </div>
 
-                <motion.button
-                  whileHover={{ scale: 1.015 }}
-                  whileTap={{ scale: 0.97 }}
+                <button
                   onClick={() => navigate("/backet/checkout")}
-                  className="w-full py-3.5 sm:py-4 rounded-xl sm:rounded-2xl text-sm font-bold text-[#0A0E14] flex items-center justify-center gap-2 group"
+                  className="w-full py-3.5 sm:py-4 rounded-xl sm:rounded-2xl text-sm font-bold text-[#0A0E14] flex items-center justify-center gap-2 group active:scale-[0.97] transition-transform duration-150"
                   style={{
                     background: `linear-gradient(135deg, ${ACCENT}, #0FBFA3)`,
                     boxShadow: `0 8px 30px -6px ${ACCENT}55, inset 0 1px 0 rgba(255,255,255,0.25)`,
                   }}
                 >
                   Davom etish
-                  <ArrowRight
-                    size={16}
-                    strokeWidth={2.5}
-                    className="transition-transform duration-300 group-hover:translate-x-1"
-                  />
-                </motion.button>
+                  <ArrowRight size={16} strokeWidth={2.5} className="transition-transform duration-300 group-hover:translate-x-1" />
+                </button>
 
                 <div className="flex items-center justify-center gap-4 sm:gap-5 mt-5 pt-4" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
                   {[
@@ -156,7 +127,7 @@ const Backet = () => {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>

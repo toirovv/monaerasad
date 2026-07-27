@@ -101,40 +101,7 @@ body::before {
   animation: meshDrift 18s ease-in-out infinite;
 }
 
-/* Suzuvchi "aurora" bloblar — yumshoq blur qilingan doiralar, sekin
-   suzib yuradi. Bu ish avvaldan mavjud bo'lgan (lekin ishlatilmagan)
-   `float` keyframe'idan foydalanadi — endi fonga chuqurlik va tirik
-   harakat qo'shadi, lekin juda xira (blur+past opacity) bo'lgani uchun
-   kontentga xalaqit bermaydi. */
-.bg-layer::before,
-.bg-layer::after {
-  content: "";
-  position: absolute;
-  border-radius: 9999px;
-  filter: blur(90px);
-  opacity: 0.55;
-  will-change: transform;
-}
-.bg-layer::before {
-  width: 480px;
-  height: 480px;
-  top: -140px;
-  left: -120px;
-  background: radial-gradient(circle, rgba(18, 198, 168, 0.4), transparent 70%);
-  animation: float 15s ease-in-out infinite;
-}
-.bg-layer::after {
-  width: 420px;
-  height: 420px;
-  bottom: -160px;
-  right: -100px;
-  background: radial-gradient(
-    circle,
-    rgba(18, 198, 168, 0.24),
-    transparent 70%
-  );
-  animation: float 19s ease-in-out infinite reverse;
-}
+/* Suzuvchi "aurora" bloblar — o'chirildi, AmbientBackground foydalaniladi */
 
 /* Blueprint panjara — ochiq va sezilarli */
 .bg-grid {
@@ -364,9 +331,7 @@ body::before {
 
 /* Card hover — CSS bilan, state render talab qilmaydi */
 .card-shell {
-  background: rgba(17, 24, 39, 0.4);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  background: rgba(17, 24, 39, 0.65);
   border: 1px solid #1f2937;
   box-shadow:
     0 4px 16px -4px rgba(0, 0, 0, 0.3),
@@ -375,10 +340,10 @@ body::before {
     transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.4s ease,
     border-color 0.4s ease;
-  will-change: transform;
 }
 .card-shell:hover {
   transform: translateY(-4px) scale(1.008);
+  will-change: transform;
   border-color: rgba(18, 198, 168, 0.27);
   box-shadow:
     0 20px 45px -14px rgba(0, 0, 0, 0.55),
@@ -469,4 +434,91 @@ body::before {
 .card-add-btn:active {
   transform: scale(0.85);
 }
- 
+
+/* Performance: GPU-accelerate common layers */
+.will-change-transform { will-change: transform; }
+.will-change-opacity { will-change: opacity; }
+
+/* Reduce layout cost for fixed elements */
+.fixed { contain: layout style; }
+
+/* Optimize glassmorphism panels — limit repaint area */
+.glass-panel {
+  contain: layout paint;
+  isolation: isolate;
+}
+
+/* Smooth scroll only for anchor navigation, not for JS-driven */
+html:not([data-scrolling]) { scroll-behavior: auto; }
+
+/* Prevent layout shifts from lazy images */
+img[loading="lazy"] {
+  background-color: rgba(17, 24, 39, 0.4);
+}
+
+/* Reduce paint for animations — promote to own compositing layer */
+@layer utilities {
+  .gpu-layer {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+}
+
+/* About values cards — CSS hover replacing framer-motion */
+.value-card {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.3s ease;
+}
+.value-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(18, 198, 168, 0.35);
+}
+
+/* ===== MOBILE PERFORMANCE: disable heavy animations on small screens ===== */
+@media (max-width: 767px) {
+  body::before {
+    animation: none !important;
+    opacity: 0.6;
+  }
+  .bg-grid {
+    animation: none !important;
+  }
+  .bg-grain {
+    display: none;
+  }
+  .ring-pulse {
+    animation: none !important;
+  }
+  .bg-layer {
+    animation: none !important;
+  }
+  #root {
+    animation: none !important;
+    opacity: 1;
+  }
+}
+
+/* Toast notification animation */
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes toastOut {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(-12px) scale(0.95); }
+}
+.toast-enter {
+  will-change: transform, opacity;
+}
+
+/* Generic fade-in-up for page transitions */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Spinning loader */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import SectionLabel from "../ui/SectionLabel";
 
 const ACCENT = "#12C6A8";
@@ -24,14 +23,9 @@ const Locations = () => (
 
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 items-start">
       {LOCATIONS.map((loc, i) => (
-        <motion.div
+        <div
           key={loc.name}
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: i * 0.08 }}
-          whileHover={{ y: -6 }}
-          className={`relative rounded-2xl overflow-hidden cursor-pointer group ${
+          className={`relative rounded-2xl overflow-hidden cursor-pointer group transition-all duration-300 hover:-translate-y-1.5 ${
             i % 2 === 1 ? "mt-8 sm:mt-14" : "mt-0"
           }`}
         >
@@ -39,6 +33,8 @@ const Locations = () => (
             <img
               src={loc.img}
               alt={loc.name}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-contain p-6 sm:p-8 transition-transform duration-500 ease-out group-hover:scale-110"
             />
           </div>
@@ -59,7 +55,7 @@ const Locations = () => (
               {loc.address}
             </p>
           </div>
-        </motion.div>
+        </div>
       ))}
     </div>
   </section>

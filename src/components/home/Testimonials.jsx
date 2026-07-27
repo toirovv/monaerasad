@@ -1,5 +1,4 @@
-import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react";
 
 const ACCENT = "#12C6A8";
@@ -44,50 +43,44 @@ const TESTIMONIALS = [
 
 const Testimonials = () => {
   const [active, setActive] = useState(0);
-  const [direction, setDirection] = useState(0);
+  const [fade, setFade] = useState(true);
   const timerRef = useRef(null);
 
-  const next = () => {
-    setDirection(1);
-    setActive((p) => (p + 1) % TESTIMONIALS.length);
-  };
+  const goTo = useCallback((idx) => {
+    setFade(false);
+    setTimeout(() => {
+      setActive(idx);
+      setFade(true);
+    }, 200);
+  }, []);
 
-  const prev = () => {
-    setDirection(-1);
-    setActive((p) => (p - 1 + TESTIMONIALS.length) % TESTIMONIALS.length);
-  };
+  const next = useCallback(() => {
+    goTo((active + 1) % TESTIMONIALS.length);
+  }, [active, goTo]);
+
+  const prev = useCallback(() => {
+    goTo((active - 1 + TESTIMONIALS.length) % TESTIMONIALS.length);
+  }, [active, goTo]);
 
   useEffect(() => {
     timerRef.current = setInterval(next, 5000);
     return () => clearInterval(timerRef.current);
-  }, []);
+  }, [next]);
 
-  const resetTimer = () => {
+  const resetTimer = useCallback(() => {
     clearInterval(timerRef.current);
     timerRef.current = setInterval(next, 5000);
-  };
+  }, [next]);
 
   const handleNext = () => { next(); resetTimer(); };
   const handlePrev = () => { prev(); resetTimer(); };
 
   const t = TESTIMONIALS[active];
 
-  const variants = {
-    enter: (d) => ({ x: d > 0 ? 80 : -80, opacity: 0, scale: 0.96 }),
-    center: { x: 0, opacity: 1, scale: 1 },
-    exit: (d) => ({ x: d > 0 ? -80 : 80, opacity: 0, scale: 0.96 }),
-  };
-
   return (
     <section className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8 pb-16 sm:pb-24">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 sm:mb-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
+        <div>
           <p className="inline-flex items-center gap-2 text-xs sm:text-sm uppercase tracking-[0.2em] mb-3 font-body" style={{ color: "#6B7280" }}>
             <span className="w-6 h-px" style={{ backgroundColor: ACCENT }} />
             Mijozlar fikrlari
@@ -96,19 +89,11 @@ const Testimonials = () => {
             <span className="text-white">Bizga </span>
             <span className="gradient-text">ishonch</span>
           </h2>
-        </motion.div>
-
-        {/* Nav buttons */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="flex items-center gap-2"
-        >
+        </div>
+        <div className="flex items-center gap-2">
           <button
             onClick={handlePrev}
-            className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer hover:scale-110"
+            className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer hover:scale-110 active:scale-90"
             style={{
               background: "rgba(255,255,255,0.04)",
               border: "1px solid rgba(255,255,255,0.08)",
@@ -118,7 +103,7 @@ const Testimonials = () => {
           </button>
           <button
             onClick={handleNext}
-            className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer hover:scale-110"
+            className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer hover:scale-110 active:scale-90"
             style={{
               background: "rgba(255,255,255,0.04)",
               border: "1px solid rgba(255,255,255,0.08)",
@@ -126,25 +111,20 @@ const Testimonials = () => {
           >
             <ChevronRight size={16} className="text-white/50" />
           </button>
-        </motion.div>
+        </div>
       </div>
 
-      {/* Main card */}
       <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden" style={{ minHeight: "220px" }}>
-        {/* Background glow */}
         <div
           className="absolute inset-0"
           style={{
-            background: `linear-gradient(135deg, rgba(17,24,39,0.7), rgba(17,24,39,0.4))`,
-            backdropFilter: "blur(20px)",
-            WebkitBackdropFilter: "blur(20px)",
+            background: "linear-gradient(135deg, rgba(17,24,39,0.7), rgba(17,24,39,0.4))",
             border: "1px solid rgba(255,255,255,0.06)",
             borderRadius: "24px",
           }}
         />
 
         <div className="relative p-5 sm:p-6 md:p-8 flex flex-col md:flex-row gap-5 md:gap-6 items-center md:items-start">
-          {/* Quote icon */}
           <div
             className="shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center"
             style={{
@@ -155,66 +135,47 @@ const Testimonials = () => {
             <Quote size={18} style={{ color: t.color }} className="opacity-60" />
           </div>
 
-          {/* Content */}
-          <div className="flex-1 min-w-0">
-            <AnimatePresence mode="wait" custom={direction}>
-              <motion.div
-                key={active}
-                custom={direction}
-                variants={variants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+          <div className="flex-1 min-w-0" style={{ opacity: fade ? 1 : 0, transition: "opacity 0.2s ease" }}>
+            <div className="flex gap-1 mb-3">
+              {Array.from({ length: 5 }).map((_, j) => (
+                <Star
+                  key={j}
+                  size={12}
+                  style={{
+                    fill: j < t.rating ? t.color : "transparent",
+                    color: j < t.rating ? t.color : "rgba(255,255,255,0.1)",
+                  }}
+                />
+              ))}
+            </div>
+            <p className="text-sm sm:text-base md:text-lg leading-relaxed mb-4 font-body" style={{ color: "#E5E7EB" }}>
+              &ldquo;{t.quote}&rdquo;
+            </p>
+            <div className="flex items-center gap-3">
+              <div
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs font-bold"
+                style={{
+                  background: `linear-gradient(135deg, ${t.color}30, ${t.color}15)`,
+                  border: `1px solid ${t.color}30`,
+                  color: t.color,
+                }}
               >
-                {/* Stars */}
-                <div className="flex gap-1 mb-3">
-                  {Array.from({ length: 5 }).map((_, j) => (
-                    <Star
-                      key={j}
-                      size={12}
-                      style={{
-                        fill: j < t.rating ? t.color : "transparent",
-                        color: j < t.rating ? t.color : "rgba(255,255,255,0.1)",
-                      }}
-                    />
-                  ))}
-                </div>
-
-                {/* Quote */}
-                <p className="text-sm sm:text-base md:text-lg leading-relaxed mb-4 font-body" style={{ color: "#E5E7EB" }}>
-                  &ldquo;{t.quote}&rdquo;
-                </p>
-
-                {/* Author */}
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs font-bold"
-                    style={{
-                      background: `linear-gradient(135deg, ${t.color}30, ${t.color}15)`,
-                      border: `1px solid ${t.color}30`,
-                      color: t.color,
-                    }}
-                  >
-                    {t.name.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="text-sm sm:text-base text-white font-semibold">{t.name}</p>
-                    <p className="text-xs" style={{ color: "#6B7280" }}>{t.role}</p>
-                  </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
+                {t.name.charAt(0)}
+              </div>
+              <div>
+                <p className="text-sm sm:text-base text-white font-semibold">{t.name}</p>
+                <p className="text-xs" style={{ color: "#6B7280" }}>{t.role}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Dots */}
       <div className="flex justify-center gap-2 mt-6">
         {TESTIMONIALS.map((_, i) => (
           <button
             key={i}
-            onClick={() => { setActive(i); setDirection(i > active ? 1 : -1); resetTimer(); }}
+            onClick={() => { goTo(i); resetTimer(); }}
             className="transition-all duration-300 rounded-full cursor-pointer"
             style={{
               width: active === i ? "24px" : "8px",

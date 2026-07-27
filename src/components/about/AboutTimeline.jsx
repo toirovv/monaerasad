@@ -1,5 +1,3 @@
-import { motion } from "framer-motion";
-
 const ACCENT = "#12C6A8";
 const BORDER = "#1F2937";
 const TEXT_SECONDARY = "#9CA3AF";
@@ -13,52 +11,44 @@ const TIMELINE = [
 ];
 
 const AboutTimeline = () => (
-  <section className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-10 sm:py-24">
+  <section className="max-w-6xl mx-auto px-5 sm:px-6 md:px-8 py-8 sm:py-24">
     <div className="text-center mb-8 sm:mb-14">
-      <p className="inline-flex items-center gap-2 text-[10px] sm:text-sm uppercase tracking-[0.2em] mb-2 sm:mb-3 font-body" style={{ color: "#6B7280" }}>
-        <span className="w-4 sm:w-6 h-px" style={{ backgroundColor: ACCENT }} />
+      <p className="inline-flex items-center gap-2.5 text-[11px] sm:text-sm uppercase tracking-[0.2em] mb-2 sm:mb-3 font-body" style={{ color: "#6B7280" }}>
+        <span className="w-5 sm:w-6 h-px" style={{ backgroundColor: ACCENT }} />
         Yo'limiz
       </p>
-      <h2 className="font-display text-2xl sm:text-4xl md:text-5xl font-bold tracking-tight">
+      <h2 className="font-display text-[20px] sm:text-4xl md:text-5xl font-bold tracking-tight">
         <span className="text-white">Bizning </span>
         <span className="gradient-text">rivojlanish</span>
       </h2>
     </div>
 
     <div className="relative max-w-2xl mx-auto">
-      {/* Vertical line */}
-      <div className="absolute left-[15px] sm:left-1/2 top-0 bottom-0 w-px" style={{ background: `linear-gradient(to bottom, transparent, ${ACCENT}44, transparent)` }} />
+      <div className="absolute left-[17px] sm:left-1/2 top-0 bottom-0 w-px" style={{ background: `linear-gradient(to bottom, transparent, ${ACCENT}44, transparent)` }} />
 
       {TIMELINE.map((item, i) => (
-        <motion.div
+        <div
           key={item.year}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-40px" }}
-          transition={{ duration: 0.5, delay: i * 0.08 }}
-          className="relative flex items-start gap-4 sm:gap-6 mb-8 sm:mb-12 last:mb-0"
+          className="relative flex items-start mb-8 sm:mb-12 last:mb-0"
         >
-          {/* Spacer for left side on desktop */}
           <div className={`hidden sm:block sm:w-1/2 ${i % 2 === 0 ? "" : "order-2"}`} />
 
-          {/* Dot */}
           <div
-            className="absolute left-[15px] sm:left-1/2 w-2.5 h-2.5 rounded-full -translate-x-[5px] sm:-translate-x-[5px] mt-2 z-10"
+            className="absolute left-[17px] sm:left-1/2 w-3 h-3 rounded-full -translate-x-[5px] sm:-translate-x-[5px] mt-2.5 z-10"
             style={{ background: ACCENT, boxShadow: `0 0 12px ${ACCENT}66` }}
           />
 
-          {/* Card */}
           <div
-            className={`ml-8 sm:ml-0 sm:w-1/2 rounded-xl p-4 sm:p-5 ${i % 2 === 0 ? "sm:pl-8" : "sm:pr-8 sm:order-1"}`}
+            className={`ml-10 sm:ml-0 sm:w-1/2 rounded-xl p-4 sm:p-5 ${i % 2 === 0 ? "sm:pl-8" : "sm:pr-8 sm:order-1"}`}
             style={{ border: `1px solid ${BORDER}`, background: "rgba(17,24,39,0.55)" }}
           >
-            <span className="inline-block text-[10px] sm:text-xs font-bold px-2 sm:px-2.5 py-0.5 rounded-full mb-1.5 sm:mb-2" style={{ background: `${ACCENT}1a`, color: ACCENT }}>
+            <span className="inline-block text-[11px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full mb-2 sm:mb-2" style={{ background: `${ACCENT}1a`, color: ACCENT }}>
               {item.year}
             </span>
-            <h3 className="font-display text-sm sm:text-lg text-white font-semibold mb-1">{item.title}</h3>
-            <p className="text-[11px] sm:text-sm leading-relaxed font-body" style={{ color: TEXT_SECONDARY }}>{item.desc}</p>
+            <h3 className="font-display text-[15px] sm:text-lg text-white font-semibold mb-1.5">{item.title}</h3>
+            <p className="text-[13px] sm:text-sm leading-relaxed font-body" style={{ color: TEXT_SECONDARY }}>{item.desc}</p>
           </div>
-        </motion.div>
+        </div>
       ))}
     </div>
   </section>

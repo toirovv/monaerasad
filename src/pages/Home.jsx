@@ -1,4 +1,6 @@
 import React from "react";
+import useSimulatedLoading from "../hooks/useSimulatedLoading";
+import HomeSkeleton from "../components/skeletons/HomeSkeleton";
 import AmbientBackground from "../components/ui/AmbientBackground";
 import RouteDivider from "../components/ui/RouteDivider";
 import Banner from "../components/home/Banner";
@@ -11,6 +13,10 @@ import Testimonials from "../components/home/Testimonials";
 import CTA from "../components/home/CTA";
 
 const Home = () => {
+  const loading = useSimulatedLoading(800);
+
+  if (loading) return <HomeSkeleton />;
+
   return (
     <div className="font-body relative">
       <AmbientBackground />

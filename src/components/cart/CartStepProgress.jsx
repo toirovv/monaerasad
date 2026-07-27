@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { ShoppingBag, CreditCard, CheckCircle2 } from "lucide-react";
 
 const ACCENT = "#12C6A8";
@@ -12,18 +11,14 @@ const STEPS = [
 const CartStepProgress = ({ currentStep = 1 }) => (
   <div className="w-full max-w-md mx-auto mb-8 sm:mb-12 px-4">
     <div className="relative flex items-center justify-between">
-      {/* Background line */}
       <div className="absolute top-5 left-[10%] right-[10%] h-[2px]" style={{ background: "rgba(255,255,255,0.08)" }} />
 
-      {/* Active line */}
-      <motion.div
-        className="absolute top-5 left-[10%] h-[2px]"
-        style={{ background: `linear-gradient(90deg, ${ACCENT}, ${ACCENT}cc)` }}
-        initial={{ width: "0%" }}
-        animate={{
+      <div
+        className="absolute top-5 left-[10%] h-[2px] transition-all duration-600"
+        style={{
+          background: `linear-gradient(90deg, ${ACCENT}, ${ACCENT}cc)`,
           width: currentStep === 1 ? "0%" : currentStep === 2 ? "40%" : "80%",
         }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       />
 
       {STEPS.map((step) => {
@@ -33,14 +28,10 @@ const CartStepProgress = ({ currentStep = 1 }) => (
 
         return (
           <div key={step.id} className="relative z-10 flex flex-col items-center gap-2">
-            <motion.div
-              animate={{
-                scale: isActive ? 1.1 : 1,
-                borderColor: isCompleted || isActive ? ACCENT : "rgba(255,255,255,0.1)",
-              }}
-              transition={{ duration: 0.4 }}
-              className="w-10 h-10 rounded-full flex items-center justify-center"
+            <div
+              className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-400"
               style={{
+                transform: isActive ? "scale(1.1)" : "scale(1)",
                 background: isCompleted
                   ? `linear-gradient(135deg, ${ACCENT}, ${ACCENT}cc)`
                   : isActive
@@ -61,8 +52,7 @@ const CartStepProgress = ({ currentStep = 1 }) => (
                   color: isCompleted ? "#0A0E14" : isActive ? ACCENT : "rgba(255,255,255,0.25)",
                 }}
               />
-            </motion.div>
-
+            </div>
             <span
               className="text-[10px] sm:text-xs font-semibold tracking-wide whitespace-nowrap"
               style={{

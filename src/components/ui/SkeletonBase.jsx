@@ -1,15 +1,20 @@
-import React from "react";
-
-const shimmer = `@keyframes skeleton-shimmer {
-  0% { background-position: -400px 0; }
-  100% { background-position: 400px 0; }
-}`;
+import React, { useEffect } from "react";
 
 const SHIMMER_BG = "linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0.03) 75%)";
+const STYLE_ID = "skeleton-shimmer-style";
 
-export const SkeletonBlock = ({ className = "", style = {} }) => (
-  <>
-    <style>{shimmer}</style>
+const ensureStyle = () => {
+  if (typeof document === "undefined") return;
+  if (document.getElementById(STYLE_ID)) return;
+  const style = document.createElement("style");
+  style.id = STYLE_ID;
+  style.textContent = `@keyframes skeleton-shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }`;
+  document.head.appendChild(style);
+};
+
+export const SkeletonBlock = ({ className = "", style = {} }) => {
+  useEffect(() => { ensureStyle(); }, []);
+  return (
     <div
       className={className}
       style={{
@@ -20,8 +25,8 @@ export const SkeletonBlock = ({ className = "", style = {} }) => (
         ...style,
       }}
     />
-  </>
-);
+  );
+};
 
 export const SkeletonCircle = ({ className = "", style = {} }) => (
   <SkeletonBlock className={className} style={{ borderRadius: "50%", ...style }} />
