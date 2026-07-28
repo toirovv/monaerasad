@@ -474,6 +474,11 @@ img[loading="lazy"] {
   border-color: rgba(18, 198, 168, 0.35);
 }
 
+@keyframes skeleton-shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
 /* ===== MOBILE PERFORMANCE: disable heavy animations on small screens ===== */
 @media (max-width: 767px) {
   body::before {
@@ -495,6 +500,19 @@ img[loading="lazy"] {
   #root {
     animation: none !important;
     opacity: 1;
+  }
+}
+
+/* iOS safe area */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 }
 

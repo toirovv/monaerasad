@@ -1,8 +1,9 @@
-import React from "react";
-import useSimulatedLoading from "../hooks/useSimulatedLoading";
+import React, { useState, useEffect, useRef } from "react";
+import gsap from "gsap";
 import HomeSkeleton from "../components/skeletons/HomeSkeleton";
 import AmbientBackground from "../components/ui/AmbientBackground";
 import RouteDivider from "../components/ui/RouteDivider";
+import GsapReveal from "../components/ui/GsapReveal";
 import Banner from "../components/home/Banner";
 import Stats from "../components/home/Stats";
 import FeaturedProducts from "../components/home/FeaturedProducts";
@@ -12,26 +13,42 @@ import Locations from "../components/home/Locations";
 import Testimonials from "../components/home/Testimonials";
 import CTA from "../components/home/CTA";
 
+let _homeLoaded = false;
+
 const Home = () => {
-  const loading = useSimulatedLoading(800);
+  const [loading, setLoading] = useState(!_homeLoaded);
+  const pageRef = useRef(null);
+
+  useEffect(() => {
+    if (_homeLoaded) return;
+    _homeLoaded = true;
+    const timer = setTimeout(() => setLoading(false), 600);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!loading && pageRef.current) {
+      gsap.fromTo(pageRef.current, { opacity: 0 }, { opacity: 1, duration: 0.6, ease: 'power2.out' })
+    }
+  }, [loading])
 
   if (loading) return <HomeSkeleton />;
 
   return (
-    <div className="font-body relative">
+    <div ref={pageRef} className="font-body relative">
       <AmbientBackground />
-      <Banner />
-      <Stats />
-      <FeaturedProducts />
+      <GsapReveal animation="fadeUp" duration={0.8}><Banner /></GsapReveal>
+      <GsapReveal animation="fadeUp"><Stats /></GsapReveal>
+      <GsapReveal animation="fadeUp" staggerItems><FeaturedProducts /></GsapReveal>
       <RouteDivider />
-      <Features />
+      <GsapReveal animation="fadeUp"><Features /></GsapReveal>
       <RouteDivider />
-      <Locations />
+      <GsapReveal animation="fadeUp"><Locations /></GsapReveal>
       <RouteDivider />
-      <Engineering />
+      <GsapReveal animation="fadeUp"><Engineering /></GsapReveal>
       <RouteDivider />
-      <Testimonials />
-      <CTA />
+      <GsapReveal animation="fadeUp"><Testimonials /></GsapReveal>
+      <GsapReveal animation="fadeUp"><CTA /></GsapReveal>
     </div>
   );
 };

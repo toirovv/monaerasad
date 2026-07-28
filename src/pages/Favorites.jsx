@@ -1,6 +1,7 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect, useRef } from "react";
 import { Heart, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import gsap from "gsap";
 import { useFavoriteIds } from "../context/FavoritesContext";
 import CardDesign from "../components/CardDesign";
 import products from "../data/product.json";
@@ -9,6 +10,13 @@ const ACCENT = "#12C6A8";
 
 const Favorites = () => {
   const favoriteIds = useFavoriteIds();
+  const pageRef = useRef(null);
+
+  useEffect(() => {
+    if (pageRef.current) {
+      gsap.fromTo(pageRef.current, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: 'power2.out' })
+    }
+  }, [])
 
   const favoriteProducts = useMemo(
     () => products.filter((p) => favoriteIds.includes(p.id)),
@@ -38,7 +46,7 @@ const Favorites = () => {
   }
 
   return (
-    <div className="min-h-screen px-4 sm:px-6 md:px-8 pt-24 pb-28">
+    <div ref={pageRef} className="min-h-screen px-4 sm:px-6 md:px-8 pt-24 pb-28">
       <div className="max-w-6xl mx-auto">
         <div className="mb-6 sm:mb-10">
           <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">

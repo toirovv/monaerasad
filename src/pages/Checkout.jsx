@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useCartItems, useCartTotals } from "../context/CartContext";
 import { useAuth } from "../context/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../components/ui/Toast";
+import gsap from "gsap";
 import CartStepProgress from "../components/cart/CartStepProgress";
-import { CreditCard, Truck, ShieldCheck, Lock, ArrowLeft, CheckCircle2, Banknote, Smartphone } from "lucide-react";
+import { CreditCard, Truck, ShieldCheck, Lock, ArrowLeft, CheckCircle2, Banknote, Smartphone, ShoppingBag } from "lucide-react";
 
 const ACCENT = "#12C6A8";
 const BORDER = "#1F2937";
@@ -18,14 +19,23 @@ const PAYMENT_OPTIONS = [
   { id: "card", label: "Plastik karta", desc: "Visa, MasterCard, Humo", icon: CreditCard },
   { id: "cash", label: "Naqd pul", desc: "Yetkazishda to'lash", icon: Banknote },
   { id: "click", label: "Click / Payme", desc: "Onlayn to'lov", icon: Smartphone },
+  { id: "savatcha", label: "Savatcha (Uzum)", desc: "Bo'lib to'lash", icon: ShoppingBag },
 ];
+
+const PAYMENT_DETAILS = {
+  card: "Bank kartangizdan to'lov amalga oshiriladi. Xavfsiz ulanish.",
+  cash: "Mahsulot yetib kelganda naqd pulda to'laysiz.",
+  click: "Click yoki Payme orqali bir zumda to'lov.",
+  savatcha: "Uzum Savatcha orqali 3, 6 yoki 12 oy muddatga bo'lib to'lang.",
+};
 
 const Checkout = () => {
   const items = useCartItems();
   const { totalItems, totalPrice, totalPriceUZS } = useCartTotals();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const toast = useToast();
+  const { addToast } = useToast();
+  const pageRef = useRef(null);
 
   const [delivery, setDelivery] = useState("standard");
   const [payment, setPayment] = useState("card");
@@ -37,16 +47,22 @@ const Checkout = () => {
   });
   const [submitted, setSubmitted] = useState(false);
 
+  useEffect(() => {
+    if (items.length > 0 && pageRef.current) {
+      gsap.fromTo(pageRef.current, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: 'power2.out' })
+    }
+  }, [items.length])
+
   const handleChange = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!form.fullName.trim() || !form.phone.trim() || !form.address.trim()) {
-      toast.warning("Iltimos, barcha majburiy maydonlarni to'ldiring");
+      addToast("Iltimos, barcha majburiy maydonlarni to'ldiring", "warning");
       return;
     }
     setSubmitted(true);
-    toast.success("Buyurtma muvaffaqiyatli qabul qilindi!");
+    addToast("Buyurtma muvaffaqiyatli qabul qilindi!", "success");
   };
 
   if (submitted) {
@@ -88,7 +104,7 @@ const Checkout = () => {
   }
 
   return (
-    <div className="min-h-screen pt-24 sm:pt-28 pb-36 md:pb-12 px-3 sm:px-4">
+    <div ref={pageRef} className="min-h-screen pt-24 sm:pt-28 pb-36 md:pb-12 px-3 sm:px-4">
       <div className="max-w-4xl mx-auto">
         <CartStepProgress currentStep={2} />
 
@@ -109,7 +125,6 @@ const Checkout = () => {
         <form onSubmit={handleSubmit}>
           <div className="grid lg:grid-cols-[1fr_340px] gap-4 sm:gap-6 items-start">
             <div className="flex flex-col gap-4 sm:gap-5">
-              {/* Contact info */}
               <div
                 className="rounded-2xl p-4 sm:p-6"
                 style={{ background: "rgba(26,32,44,0.5)", border: `1px solid ${BORDER}` }}
@@ -165,7 +180,6 @@ const Checkout = () => {
                 </div>
               </div>
 
-              {/* Delivery */}
               <div
                 className="rounded-2xl p-4 sm:p-6"
                 style={{ background: "rgba(26,32,44,0.5)", border: `1px solid ${BORDER}` }}
@@ -203,7 +217,6 @@ const Checkout = () => {
                 </div>
               </div>
 
-              {/* Payment */}
               <div
                 className="rounded-2xl p-4 sm:p-6"
                 style={{ background: "rgba(26,32,44,0.5)", border: `1px solid ${BORDER}` }}
@@ -236,10 +249,14 @@ const Checkout = () => {
                     );
                   })}
                 </div>
+                {PAYMENT_DETAILS[payment] && (
+                  <p className="mt-3 text-[11px] text-white/30 leading-relaxed px-1">
+                    {PAYMENT_DETAILS[payment]}
+                  </p>
+                )}
               </div>
             </div>
 
-            {/* Order summary */}
             <div className="lg:sticky lg:top-28">
               <div
                 className="rounded-2xl sm:rounded-[20px] overflow-hidden"
@@ -260,7 +277,7 @@ const Checkout = () => {
                           className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0"
                           style={{ background: "rgba(255,255,255,0.04)" }}
                         >
-                          <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                          <img src={item.image} alt={item.name} width="40" height="40" className="w-full h-full object-cover" loading="lazy" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-xs text-white font-medium truncate">{item.name}</p>

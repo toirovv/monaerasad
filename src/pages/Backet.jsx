@@ -1,4 +1,6 @@
+import { useEffect, useRef } from "react";
 import { Trash2, ShoppingBag, ArrowRight, ShieldCheck, Truck, RotateCcw } from "lucide-react";
+import gsap from "gsap";
 import { useCartItems, useCartTotals, useCartActions } from "../context/CartContext";
 import CartEmpty from "../components/cart/CartEmpty";
 import CartItem from "../components/cart/CartItem";
@@ -12,11 +14,18 @@ const Backet = () => {
   const { totalItems, totalPrice, totalPriceUZS } = useCartTotals();
   const { updateQty, removeItem, clearCart } = useCartActions();
   const navigate = useNavigate();
+  const pageRef = useRef(null);
+
+  useEffect(() => {
+    if (items.length > 0 && pageRef.current) {
+      gsap.fromTo(pageRef.current, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: 'power2.out' })
+    }
+  }, [items.length])
 
   if (items.length === 0) return <CartEmpty />;
 
   return (
-    <div className="min-h-screen pt-24 sm:pt-28 pb-36 md:pb-12 px-3 sm:px-4">
+    <div ref={pageRef} className="min-h-screen pt-24 sm:pt-28 pb-36 md:pb-12 px-3 sm:px-4">
       <div className="max-w-4xl mx-auto">
         <CartStepProgress currentStep={1} />
 

@@ -1,7 +1,8 @@
-import React, { useState, useCallback, useMemo, memo, lazy, Suspense } from "react";
-import { Heart, Eye, Star } from "lucide-react";
+import React, { useState, useCallback, useMemo, memo, lazy, Suspense, useRef, useEffect } from "react";
+import gsap from "gsap";
 import { useCartItem, useCartActions } from "../context/CartContext";
 import { useIsFavorite, useFavoritesActions } from "../context/FavoritesContext";
+import { HeartIcon, StarIcon } from "./ui/RealIcons";
 import placeholderImg from "../assets/placeholder.png";
 import CartStepper from "./card/CartStepper";
 
@@ -27,18 +28,10 @@ const BADGE_STYLES = {
 
 const GPU_LAYER = { transform: "translateZ(0)", willChange: "transform" };
 
-const StarsSmall = memo(({ rating, size = 9 }) => (
+const StarsSmall = memo(({ rating, size = 10 }) => (
   <div className="flex items-center gap-0.5">
     {Array.from({ length: 5 }).map((_, i) => (
-      <Star
-        key={i}
-        size={size}
-        strokeWidth={1.5}
-        style={{
-          color: i < Math.round(rating) ? "#F59E0B" : "rgba(255,255,255,0.12)",
-          fill: i < Math.round(rating) ? "#F59E0B" : "transparent",
-        }}
-      />
+      <StarIcon key={i} filled={i < Math.round(rating)} size={size} />
     ))}
   </div>
 ));
@@ -114,7 +107,7 @@ const CardDesign = memo(
           style={GPU_LAYER}
         >
           {/* Image */}
-          <div className="relative aspect-[4/3] overflow-hidden bg-black/15">
+          <div className="relative aspect-square sm:aspect-[4/3] overflow-hidden bg-black/15">
             <img
               src={image || placeholderImg}
               alt={name}
@@ -124,10 +117,10 @@ const CardDesign = memo(
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent opacity-70 group-hover:opacity-50 transition-opacity duration-500 pointer-events-none" />
 
-            <div className="absolute top-0 left-0 right-0 flex items-start justify-between p-1.5 sm:p-2.5 z-10">
+            <div className="absolute top-0 left-0 right-0 flex items-start justify-between p-2 sm:p-2.5 z-10">
               {badge && BADGE_STYLES[badge] ? (
                 <span
-                  className="px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-bold uppercase tracking-wider"
+                  className="px-2 py-1 rounded-full text-[11px] sm:text-[12px] font-bold uppercase tracking-wider"
                   style={{
                     background: BADGE_STYLES[badge].bg,
                     color: BADGE_STYLES[badge].text,
@@ -140,24 +133,28 @@ const CardDesign = memo(
                 <div />
               )}
 
-              <div className="flex items-center gap-1 sm:gap-1.5">
+              <div className="flex items-center gap-1.5 sm:gap-2">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     openDetail();
                   }}
-                  title="Batafsil ko'rish"
-                  className="card-icon-btn hidden sm:flex w-8 h-8 sm:w-9 sm:h-9 rounded-full items-center justify-center"
+                  aria-label="Batafsil ko'rish"
+                  className="card-icon-btn w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center min-w-[36px] min-h-[36px]"
                   style={GLASS_BTN}
                 >
-                  <Eye size={14} strokeWidth={2} className="text-white/80" />
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white/80">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
                 </button>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     toggleFavorite(id);
                   }}
-                  className="card-icon-btn w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center"
+                  className="card-icon-btn w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center min-w-[36px] min-h-[36px]"
+                  aria-label="Sevimlilarga qo'shish"
                   style={
                     liked
                       ? {
@@ -168,25 +165,14 @@ const CardDesign = memo(
                       : GLASS_BTN
                   }
                 >
-                  <Heart
-                    size={13}
-                    strokeWidth={2}
-                    className="sm:hidden"
-                    style={{ color: liked ? "#0A0E14" : "#fff", fill: liked ? "#0A0E14" : "transparent" }}
-                  />
-                  <Heart
-                    size={14}
-                    strokeWidth={2}
-                    className="hidden sm:block"
-                    style={{ color: liked ? "#0A0E14" : "#fff", fill: liked ? "#0A0E14" : "transparent", transition: "all 0.2s ease" }}
-                  />
+                  <HeartIcon filled={liked} />
                 </button>
               </div>
             </div>
 
             {hasDiscount && (
               <span
-                className="absolute bottom-1.5 left-1.5 sm:bottom-2 sm:left-2 z-10 px-1.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold text-white"
+                className="absolute bottom-2 left-2 z-10 px-2 py-0.5 rounded-full text-[11px] sm:text-[12px] font-bold text-white"
                 style={{ background: "linear-gradient(135deg, #EF4444, #DC2626)", boxShadow: "0 4px 15px -3px rgba(239,68,68,0.5)" }}
               >
                 -{discount}%
@@ -195,28 +181,28 @@ const CardDesign = memo(
           </div>
 
           {/* Content */}
-          <div className="relative p-3 sm:p-4 flex flex-col gap-1 sm:gap-2 flex-1">
+          <div className="relative p-3 sm:p-4 flex flex-col gap-1.5 sm:gap-2 flex-1">
             {carModel && (
-              <p className="text-[9px] sm:text-[10px] font-semibold uppercase tracking-[0.08em] truncate" style={{ color: "#6B7280" }}>
+              <p className="text-[11px] sm:text-[12px] font-semibold uppercase tracking-[0.08em] truncate" style={{ color: "#6B7280" }}>
                 {carModel}
               </p>
             )}
-            <h3 className="text-[13px] sm:text-[14px] text-white font-semibold leading-tight line-clamp-1">{name}</h3>
+            <h3 className="text-[14px] sm:text-base text-white font-semibold leading-tight line-clamp-1">{name}</h3>
             {description && (
-              <p className="hidden sm:block text-[12px] leading-relaxed line-clamp-2" style={{ color: "#9CA3AF" }}>
+              <p className="text-[12px] sm:text-[13px] leading-relaxed line-clamp-2" style={{ color: "#9CA3AF" }}>
                 {description}
               </p>
             )}
-            <div className="flex items-center gap-1 sm:gap-1.5">
+            <div className="flex items-center gap-1.5">
               <StarsSmall rating={rating} />
-              <span className="text-[10px] sm:text-[10px] font-medium" style={{ color: "#9CA3AF" }}>
-                {rating}
-              </span>
-              {reviews > 0 && (
-                <span className="hidden sm:inline text-[10px]" style={{ color: "#6B7280" }}>
-                  ({reviews})
+<span className="text-[11px] sm:text-[12px] font-medium" style={{ color: "#9CA3AF" }}>
+                  {rating}
                 </span>
-              )}
+                {reviews > 0 && (
+                  <span className="text-[11px]" style={{ color: "#6B7280" }}>
+                    ({reviews})
+                  </span>
+                )}
             </div>
             <div className="flex-1" />
 
@@ -227,17 +213,15 @@ const CardDesign = memo(
               <div className="flex flex-col gap-0.5 min-w-0">
                 <div className="flex items-baseline gap-1 sm:gap-1.5 flex-wrap">
                   {hasDiscount && (
-                    <span className="text-[9px] sm:text-[11px] line-through font-medium" style={{ color: "#6B7280" }}>
-                      {currency}
-                      {oldPrice}
+                    <span className="text-[11px] sm:text-[12px] line-through font-medium" style={{ color: "#6B7280" }}>
+                      {currency}{oldPrice}
                     </span>
                   )}
-                  <span className="text-[15px] sm:text-xl font-bold tracking-tight" style={{ color: ACCENT }}>
-                    {currency}
-                    {price}
+                  <span className="text-base sm:text-xl font-bold tracking-tight" style={{ color: ACCENT }}>
+                    {currency}{price}
                   </span>
                 </div>
-                <span className="text-[9px] sm:text-[10px] font-medium truncate" style={{ color: "#9CA3AF" }}>
+                <span className="text-[10px] sm:text-[11px] font-medium truncate" style={{ color: "#9CA3AF" }}>
                   {priceUZS ? priceUZS.toLocaleString("uz-UZ") : ""} {currencyUZS}
                   {hasDiscountUZS && oldPriceUZS && (
                     <span className="line-through ml-1 sm:ml-1.5" style={{ color: "#6B7280" }}>

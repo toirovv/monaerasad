@@ -1,5 +1,6 @@
-import React, { useState, useMemo, memo } from "react";
+import React, { useState, useMemo, memo, useEffect, useRef } from "react";
 import { Search, X, SlidersHorizontal, Package } from "lucide-react";
+import gsap from "gsap";
 import products from "../data/product.json";
 import CatalogGrid from "../components/catalog/CatalogGrid";
 import useTypewriter from "../hooks/useTypewriter";
@@ -37,7 +38,14 @@ const Catalog = memo(() => {
   const [sortBy, setSortBy] = useState("default");
   const [sortOpen, setSortOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const pageRef = useRef(null);
   const placeholderText = useTypewriter(TYPEWRITER_WORDS, { typeSpeed: 90, deleteSpeed: 45, pauseTime: 1600 });
+
+  useEffect(() => {
+    if (pageRef.current) {
+      gsap.fromTo(pageRef.current, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: 'power2.out' })
+    }
+  }, [])
 
   const filtered = useMemo(() => {
     const matched = products.filter((p) => {
@@ -55,22 +63,22 @@ const Catalog = memo(() => {
   const currentSort = SORT_OPTIONS.find((o) => o.value === sortBy);
 
   return (
-    <div className="font-body pt-24 sm:pt-32 pb-28">
+    <div ref={pageRef} className="font-body pt-24 sm:pt-32 pb-28">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8">
 
         <div className="mb-6 sm:mb-8">
           <div className="flex items-center gap-3 mb-3">
             <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center"
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center"
               style={{ background: `linear-gradient(135deg, ${ACCENT}18, ${ACCENT}08)`, border: `1px solid ${ACCENT}25` }}
             >
-              <Package size={14} strokeWidth={2} style={{ color: ACCENT }} />
+              <Package size={16} strokeWidth={2} style={{ color: ACCENT }} />
             </div>
-            <span className="text-[11px] sm:text-xs uppercase tracking-[0.2em] font-body font-semibold" style={{ color: ACCENT }}>
+            <span className="text-sm sm:text-sm uppercase tracking-[0.2em] font-semibold" style={{ color: ACCENT }}>
               Katalog
             </span>
             <span
-              className="ml-auto px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold"
+              className="ml-auto px-3 py-1.5 rounded-full text-sm font-semibold"
               style={{ background: `${ACCENT}12`, border: `1px solid ${ACCENT}20`, color: ACCENT }}
             >
               {filtered.length} ta
@@ -91,7 +99,7 @@ const Catalog = memo(() => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={search || isFocused ? "" : `${placeholderText} qidirish...`}
-              className="w-full pl-10 pr-9 py-2.5 sm:py-3 rounded-xl text-sm text-white placeholder-white/25 outline-none transition-all duration-200"
+              className="w-full pl-10 pr-9 py-3 sm:py-3.5 rounded-xl text-sm text-white placeholder-white/25 outline-none transition-all duration-200"
               style={{
                 background: "rgba(17,24,39,0.4)",
                 border: `1px solid ${isFocused ? `${ACCENT}44` : "rgba(255,255,255,0.06)"}`,
@@ -109,14 +117,14 @@ const Catalog = memo(() => {
           <div className="relative">
             <button
               onClick={() => setSortOpen((v) => !v)}
-              className="flex items-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap"
+              className="flex items-center gap-2 px-3 sm:px-4 py-3 sm:py-3.5 rounded-xl text-sm sm:text-sm font-medium transition-all duration-200 whitespace-nowrap"
               style={{
                 background: sortOpen ? `${ACCENT}12` : "rgba(17,24,39,0.4)",
                 border: `1px solid ${sortOpen ? `${ACCENT}33` : "rgba(255,255,255,0.06)"}`,
                 color: sortOpen ? ACCENT : "rgba(255,255,255,0.5)",
               }}
             >
-              <SlidersHorizontal size={14} />
+              <SlidersHorizontal size={15} />
               <span className="hidden sm:inline">{currentSort?.label}</span>
             </button>
 
@@ -139,7 +147,7 @@ const Catalog = memo(() => {
                       <button
                         key={opt.value}
                         onClick={() => { setSortBy(opt.value); setSortOpen(false); }}
-                        className="w-full px-4 py-2.5 text-xs sm:text-sm text-left transition-colors duration-150 hover:bg-white/[0.04]"
+                        className="w-full px-4 py-3 text-sm sm:text-sm text-left transition-colors duration-150 hover:bg-white/[0.04]"
                         style={{ color: active ? ACCENT : "rgba(255,255,255,0.5)", background: active ? `${ACCENT}10` : "transparent" }}
                       >
                         {opt.label}
@@ -159,7 +167,7 @@ const Catalog = memo(() => {
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className="px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-medium transition-all duration-200 shrink-0"
+                className="px-4 sm:px-5 py-2.5 sm:py-2.5 rounded-full text-sm sm:text-sm font-medium transition-all duration-200 shrink-0"
                 style={
                   active
                     ? { background: ACCENT, color: "#0A0E14" }
